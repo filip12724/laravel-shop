@@ -197,9 +197,9 @@
                                          width="58" height="58"
                                          style="object-fit:cover; border-radius:6px; border:2px solid #f0e8e7;">
                                 @else
-                                    <div style="width:58px;height:58px;background:#f5eeec;border-radius:6px;display:flex;align-items:center;justify-content:center;">
-                                        <i class="fas fa-image" style="color:#c9a09a;"></i>
-                                    </div>
+                                    <img src="https://picsum.photos/seed/{{ $item->product->id }}/58/58"
+                                         width="58" height="58"
+                                         style="object-fit:cover;border-radius:6px;border:2px solid #f0e8e7;">
                                 @endif
                                 <div>
                                     <a href="{{ route('shop.show', $item->product) }}" class="cart-product-link">

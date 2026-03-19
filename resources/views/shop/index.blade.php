@@ -35,7 +35,6 @@
         margin-bottom: 10px;
     }
 
-    /* Custom checkboxes in palette colour */
     .filter-check {
         display: flex;
         align-items: center;
@@ -54,7 +53,6 @@
     }
     .filter-check:hover { color: #C3110C; }
 
-    /* Price inputs */
     .price-input {
         width: 100%;
         padding: 5px 10px;
@@ -66,20 +64,6 @@
     }
     .price-input:focus { border-color: #C3110C; box-shadow: 0 0 0 2px rgba(195,17,12,.15); }
 
-    /* Sort select */
-    .filter-select {
-        width: 100%;
-        padding: 6px 10px;
-        font-size: .875rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        outline: none;
-        background: #fff;
-        cursor: pointer;
-    }
-    .filter-select:focus { border-color: #C3110C; box-shadow: 0 0 0 2px rgba(195,17,12,.15); }
-
-    /* Buttons */
     .btn-filter-apply {
         width: 100%;
         padding: 8px;
@@ -108,28 +92,117 @@
     }
     .btn-filter-clear:hover { background: #740A03; color: #fff; }
 
-    /* Active filter badges */
-    .active-filter-tag {
-        display: inline-flex;
+    /* ── Search + sort toolbar ──────────────────── */
+    .shop-toolbar {
+        display: flex;
+        gap: 10px;
         align-items: center;
-        gap: 4px;
-        background: #f5e8e7;
-        color: #740A03;
-        border: 1px solid #e0b0ad;
-        border-radius: 20px;
-        padding: 2px 10px;
-        font-size: .78rem;
-        font-weight: 500;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        background: linear-gradient(90deg, #280905 0%, #3d0c07 100%);
+        border-bottom: 3px solid #C3110C;
+        border-radius: 8px;
+        padding: 10px 14px;
+        box-shadow: 0 2px 12px rgba(40,9,5,.2);
     }
-    .active-filter-tag button {
-        background: none;
-        border: none;
-        color: #C3110C;
+    .shop-search-wrap {
+        flex: 1;
+        min-width: 180px;
+        display: flex;
+    }
+    .shop-search-wrap .shop-search-input {
+        flex: 1;
+        padding: 7px 14px;
+        font-size: .875rem;
+        border: 1px solid rgba(255,255,255,.2);
+        border-right: none;
+        border-radius: 20px 0 0 20px;
+        outline: none;
+        transition: background .2s, border-color .2s;
+        background: rgba(255,255,255,.1);
+        color: #fff;
+    }
+    .shop-search-wrap .shop-search-input::placeholder { color: rgba(255,255,255,.5); }
+    .shop-search-wrap .shop-search-input:focus {
+        background: rgba(255,255,255,.18);
+        border-color: #E6501B;
+        box-shadow: none;
+    }
+    .shop-search-wrap .shop-search-btn {
+        background: #C3110C;
+        border: 1px solid #C3110C;
+        color: #fff;
+        border-radius: 0 20px 20px 0;
+        padding: 0 14px;
         cursor: pointer;
-        padding: 0;
         font-size: .85rem;
-        line-height: 1;
+        transition: background .2s;
+        flex-shrink: 0;
     }
+    .shop-search-wrap .shop-search-btn:hover { background: #E6501B; border-color: #E6501B; }
+    .toolbar-divider {
+        width: 1px;
+        height: 28px;
+        background: rgba(255,255,255,.2);
+        flex-shrink: 0;
+    }
+    .sort-label {
+        font-size: .78rem;
+        font-weight: 600;
+        color: #f5d5c8;
+        text-transform: uppercase;
+        letter-spacing: .05em;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+    /* ── Custom sort dropdown ───────────────────── */
+    .sort-dropdown { position: relative; flex-shrink: 0; }
+    .sort-dropdown-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 14px;
+        font-size: .875rem;
+        border: 1px solid rgba(255,255,255,.2);
+        border-radius: 20px;
+        background: rgba(255,255,255,.1);
+        color: #fff;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background .2s, border-color .2s;
+        user-select: none;
+    }
+    .sort-dropdown-btn:hover { background: rgba(255,255,255,.18); border-color: rgba(255,255,255,.4); }
+    .sort-dropdown-btn .sort-chevron { font-size: .7rem; opacity: .7; transition: transform .2s; }
+    .sort-dropdown.open .sort-chevron { transform: rotate(180deg); }
+    .sort-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: calc(100% + 6px);
+        right: 0;
+        min-width: 180px;
+        background: #280905;
+        border: none;
+        border-top: 3px solid #C3110C;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 8px 24px rgba(40,9,5,.4);
+        z-index: 9999;
+        overflow: hidden;
+    }
+    .sort-dropdown.open .sort-dropdown-menu { display: block; }
+    .sort-dropdown-item {
+        display: block;
+        padding: 10px 16px;
+        font-size: .875rem;
+        color: #f5d5c8;
+        cursor: pointer;
+        transition: background .15s, color .15s;
+        border-bottom: 1px solid #3d0c07;
+    }
+    .sort-dropdown-item:last-child { border-bottom: none; }
+    .sort-dropdown-item:hover { background: #740A03; color: #fff; }
+    .sort-dropdown-item.active { background: #C3110C; color: #fff; font-weight: 600; }
 </style>
 @endpush
 
@@ -167,17 +240,6 @@
                 </div>
             </div>
 
-            {{-- Sort --}}
-            <div class="filter-section">
-                <div class="filter-section-title">Sort By</div>
-                <select id="sortSelect" class="filter-select">
-                    <option value=""       {{ !request('sort') ? 'selected' : '' }}>Name A–Z</option>
-                    <option value="price_asc"  {{ request('sort') == 'price_asc'  ? 'selected' : '' }}>Price: Low → High</option>
-                    <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price: High → Low</option>
-                    <option value="newest"     {{ request('sort') == 'newest'     ? 'selected' : '' }}>Newest First</option>
-                </select>
-            </div>
-
             {{-- Buttons --}}
             <div class="filter-section">
                 <button class="btn-filter-apply" id="applyFilters">
@@ -192,16 +254,39 @@
 
     {{-- ── Product grid ─────────────────────────── --}}
     <div class="col-md-9">
-        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-            <div>
-                <h5 class="mb-0">Products</h5>
-                <small class="text-muted" id="productCount">{{ $products->total() }} product(s) found</small>
+
+        {{-- Search + sort toolbar --}}
+        <div class="shop-toolbar">
+            <div class="shop-search-wrap">
+                <input type="text" id="shopSearch" class="shop-search-input"
+                       placeholder="Search products…"
+                       value="{{ request('search') }}">
+                <button type="button" class="shop-search-btn" id="shopSearchBtn">
+                    <i class="fas fa-search"></i>
+                </button>
             </div>
-            <div class="d-flex flex-wrap gap-1" id="activeFilterTags">
-                @if(request('search'))
-                    <span class="active-filter-tag">Search: "{{ request('search') }}"</span>
-                @endif
+            <div class="toolbar-divider"></div>
+            <div class="sort-dropdown" id="sortDropdown">
+                @php
+                    $sortLabels = ['' => 'Name A–Z', 'price_asc' => 'Price: Low → High', 'price_desc' => 'Price: High → Low', 'newest' => 'Newest First'];
+                    $currentSort = request('sort', '');
+                @endphp
+                <button type="button" class="sort-dropdown-btn" id="sortDropdownBtn">
+                    <i class="fas fa-sort-amount-down" style="font-size:.8rem;opacity:.8;"></i>
+                    <span id="sortLabel">{{ $sortLabels[$currentSort] }}</span>
+                    <i class="fas fa-chevron-down sort-chevron"></i>
+                </button>
+                <div class="sort-dropdown-menu">
+                    @foreach($sortLabels as $val => $label)
+                    <div class="sort-dropdown-item {{ $currentSort === $val ? 'active' : '' }}"
+                         data-value="{{ $val }}">{{ $label }}</div>
+                    @endforeach
+                </div>
             </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <small class="text-muted" id="productCount">{{ $products->total() }} product(s) found</small>
         </div>
 
         <div class="row" id="productGrid">
@@ -233,23 +318,19 @@ const BASE_URL = '{{ route('shop.index') }}';
 function getFilters() {
     const params = new URLSearchParams();
 
-    // Keep search term
-    const search = new URLSearchParams(location.search).get('search');
+    const search = $('#shopSearch').val().trim();
     if (search) params.set('search', search);
 
-    // Multiple categories
     $('input.filter-checkbox:checked').each(function () {
         params.append('categories[]', $(this).val());
     });
 
-    // Price range
     const priceMin = $('#priceMin').val();
     const priceMax = $('#priceMax').val();
     if (priceMin) params.set('price_min', priceMin);
     if (priceMax) params.set('price_max', priceMax);
 
-    // Sort
-    const sort = $('#sortSelect').val();
+    const sort = $('#sortDropdown').data('value') || '';
     if (sort) params.set('sort', sort);
 
     return params;
@@ -270,6 +351,21 @@ function loadProducts(params) {
     });
 }
 
+// Search input — debounced as-you-type
+let searchTimer;
+$('#shopSearch').on('input', function () {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => loadProducts(getFilters()), 350);
+});
+
+// Search — trigger on Enter or button click
+$('#shopSearch').on('keydown', function (e) {
+    if (e.key === 'Enter') { clearTimeout(searchTimer); loadProducts(getFilters()); }
+});
+$('#shopSearchBtn').on('click', function () {
+    clearTimeout(searchTimer); loadProducts(getFilters());
+});
+
 // Apply filters button
 $('#applyFilters').on('click', function () {
     loadProducts(getFilters());
@@ -280,17 +376,33 @@ $('#priceMin, #priceMax').on('keydown', function (e) {
     if (e.key === 'Enter') loadProducts(getFilters());
 });
 
-// Sort — instant change
-$('#sortSelect').on('change', function () {
+// Custom sort dropdown
+$('#sortDropdownBtn').on('click', function (e) {
+    e.stopPropagation();
+    $('#sortDropdown').toggleClass('open');
+});
+$(document).on('click', function () {
+    $('#sortDropdown').removeClass('open');
+});
+$(document).on('click', '.sort-dropdown-item', function () {
+    const val   = $(this).data('value');
+    const label = $(this).text();
+    $('#sortDropdown').data('value', val).removeClass('open');
+    $('#sortLabel').text(label);
+    $('.sort-dropdown-item').removeClass('active');
+    $(this).addClass('active');
     loadProducts(getFilters());
 });
 
 // Clear all
 $('#clearFilters').on('click', function () {
+    $('#shopSearch').val('');
     $('input.filter-checkbox').prop('checked', false);
     $('#priceMin').val('');
     $('#priceMax').val('');
-    $('#sortSelect').val('');
+    $('#sortDropdown').data('value', '');
+    $('#sortLabel').text('Name A–Z');
+    $('.sort-dropdown-item').removeClass('active').filter('[data-value=""]').addClass('active');
     loadProducts(new URLSearchParams());
 });
 
@@ -298,6 +410,9 @@ $('#clearFilters').on('click', function () {
 $(document).on('click', '#paginationArea a', function (e) {
     e.preventDefault();
     const params = new URL($(this).attr('href')).searchParams;
+    // Keep current search in input when paginating
+    const currentSearch = $('#shopSearch').val().trim();
+    if (currentSearch && !params.has('search')) params.set('search', currentSearch);
     loadProducts(params);
     window.scrollTo(0, 0);
 });

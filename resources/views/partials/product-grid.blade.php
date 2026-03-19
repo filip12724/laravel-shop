@@ -7,9 +7,9 @@
                      class="card-img-top" style="height:200px;object-fit:cover;"
                      alt="{{ $product->name }}">
             @else
-                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height:200px;">
-                    <i class="fas fa-image fa-3x text-muted"></i>
-                </div>
+                <img src="https://picsum.photos/seed/{{ $product->id }}/400/200"
+                     class="card-img-top" style="height:200px;object-fit:cover;"
+                     alt="{{ $product->name }}">
             @endif
         </a>
         <div class="card-body d-flex flex-column">

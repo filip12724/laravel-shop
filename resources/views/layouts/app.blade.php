@@ -225,8 +225,104 @@
 
     @include('partials.footer')
 
+    {{-- Global success toast --}}
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index:9999">
+        <div id="globalSuccessToast" class="toast align-items-center text-white border-0" role="alert"
+             style="background:#C3110C; min-width:260px;">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center gap-2">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="globalSuccessMessage"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    @if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('globalSuccessMessage').textContent = @json(session('success'));
+            new bootstrap.Toast(document.getElementById('globalSuccessToast'), { delay: 5000 }).show();
+        });
+    </script>
+    @endif
+
+    <script>
+    (function () {
+        const input    = document.getElementById('navSearchInput');
+        const dropdown = document.getElementById('searchDropdown');
+        if (!input || !dropdown) return;
+
+        const SEARCH_URL = '{{ route('search') }}';
+        const PICSUM     = 'https://picsum.photos/seed/';
+        let timer;
+
+        function placeholderImg(id) {
+            return PICSUM + id + '/80/80';
+        }
+
+        function render(results) {
+            if (!results.length) {
+                dropdown.innerHTML = '<div style="padding:14px 16px;color:#888;font-size:.875rem;">No products found.</div>';
+            } else {
+                dropdown.innerHTML = results.map(p => `
+                    <a href="${p.url}" style="
+                        display:flex;align-items:center;gap:12px;
+                        padding:10px 14px;text-decoration:none;color:inherit;
+                        border-bottom:1px solid #f5eeec;transition:background .15s;
+                    " onmouseover="this.style.background='#fdf5f4'" onmouseout="this.style.background=''">
+                        <img src="${p.image || placeholderImg(p.id)}"
+                             width="46" height="46"
+                             style="object-fit:cover;border-radius:6px;flex-shrink:0;border:1px solid #f0e8e7;">
+                        <div style="min-width:0;">
+                            <div style="font-weight:600;font-size:.875rem;color:#1a0503;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</div>
+                            <div style="font-size:.75rem;color:#999;margin-top:1px;">${p.category}</div>
+                        </div>
+                        <div style="margin-left:auto;flex-shrink:0;font-weight:700;color:#C3110C;font-size:.9rem;">$${p.price}</div>
+                    </a>
+                `).join('') + `
+                    <a href="{{ route('shop.index') }}?search=${encodeURIComponent(input.value)}" style="
+                        display:block;padding:10px 14px;text-align:center;
+                        font-size:.8rem;font-weight:600;color:#C3110C;
+                        text-decoration:none;background:#fdfafa;
+                    " onmouseover="this.style.background='#f5eeec'" onmouseout="this.style.background='#fdfafa'">
+                        View all results <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                `;
+            }
+            dropdown.style.display = 'block';
+        }
+
+        function hide() {
+            dropdown.style.display = 'none';
+        }
+
+        input.addEventListener('input', function () {
+            clearTimeout(timer);
+            const q = this.value.trim();
+            if (q.length < 2) { hide(); return; }
+            dropdown.innerHTML = '<div style="padding:14px 16px;color:#aaa;font-size:.875rem;"><span class="spinner-border spinner-border-sm me-2"></span>Searching…</div>';
+            dropdown.style.display = 'block';
+            timer = setTimeout(() => {
+                fetch(SEARCH_URL + '?q=' + encodeURIComponent(q))
+                    .then(r => r.json())
+                    .then(render);
+            }, 250);
+        });
+
+        // Hide when clicking outside
+        document.addEventListener('click', function (e) {
+            if (!input.closest('form').contains(e.target)) hide();
+        });
+
+        // Keep open when clicking inside dropdown
+        dropdown.addEventListener('mousedown', e => e.preventDefault());
+    })();
+    </script>
 
     @stack('scripts')
 </body>

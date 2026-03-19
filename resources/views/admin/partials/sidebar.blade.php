@@ -1,18 +1,24 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="{{ route('admin.dashboard') }}" class="brand-link">
-        <span class="brand-text font-weight-light"><i class="fas fa-shopping-bag mr-2"></i>Laravel Shop</span>
+        <span class="brand-text">
+            <i class="fas fa-shopping-bag mr-2"></i>Laravel Shop
+        </span>
     </a>
 
     <div class="sidebar">
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <div class="user-panel d-flex align-items-center">
+            <div class="user-avatar-circle">
+                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            </div>
             <div class="info">
                 <a href="#" class="d-block">{{ auth()->user()->name }}</a>
-                <small class="text-muted">Administrator</small>
+                <small>Administrator</small>
             </div>
         </div>
 
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+
                 <li class="nav-item">
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -20,7 +26,7 @@
                     </a>
                 </li>
 
-                <li class="nav-header">CATALOG</li>
+                <li class="nav-header">Catalog</li>
 
                 <li class="nav-item">
                     <a href="{{ route('admin.products.index') }}" class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
@@ -35,7 +41,7 @@
                     </a>
                 </li>
 
-                <li class="nav-header">SALES</li>
+                <li class="nav-header">Sales</li>
 
                 <li class="nav-item">
                     <a href="{{ route('admin.orders.index') }}" class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
@@ -44,7 +50,7 @@
                     </a>
                 </li>
 
-                <li class="nav-header">USERS & REPORTS</li>
+                <li class="nav-header">Users & Reports</li>
 
                 <li class="nav-item">
                     <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
@@ -68,6 +74,7 @@
                         @endif
                     </a>
                 </li>
+
             </ul>
         </nav>
     </div>

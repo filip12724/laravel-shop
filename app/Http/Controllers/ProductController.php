@@ -56,6 +56,34 @@ class ProductController extends Controller
         return view('shop.index', compact('products', 'categories'));
     }
 
+    public function search(Request $request)
+    {
+        $q = trim($request->get('q', ''));
+
+        if (strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        $products = Product::with('category')
+            ->where('active', true)
+            ->where(function ($query) use ($q) {
+                $query->where('name', 'like', "%{$q}%")
+                      ->orWhere('description', 'like', "%{$q}%");
+            })
+            ->limit(6)
+            ->get()
+            ->map(fn ($p) => [
+                'id'    => $p->id,
+                'name'  => $p->name,
+                'price' => number_format($p->price, 2),
+                'category' => $p->category->name,
+                'image' => $p->image ? asset('storage/' . $p->image) : null,
+                'url'   => route('shop.show', $p),
+            ]);
+
+        return response()->json($products);
+    }
+
     public function show(Product $product)
     {
         $product->load(['category', 'reviews.user']);

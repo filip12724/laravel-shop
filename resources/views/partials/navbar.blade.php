@@ -13,7 +13,13 @@
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav me-3">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('home') || request()->routeIs('shop.index') ? 'active' : '' }}"
+                    <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
+                       href="{{ route('home') }}">
+                        <i class="fas fa-home me-1" style="font-size:.8rem;opacity:.8;"></i>Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('shop.index', 'shop.show') ? 'active' : '' }}"
                        href="{{ route('shop.index') }}">
                         <i class="fas fa-store me-1" style="font-size:.8rem;opacity:.8;"></i>Shop
                     </a>
@@ -27,12 +33,26 @@
             </ul>
 
             {{-- Search --}}
-            <form class="d-flex ms-auto me-3 navbar-search" style="max-width:260px;" method="GET" action="{{ route('shop.index') }}">
-                <div class="input-group input-group-sm">
-                    <input type="text" name="search" class="form-control" placeholder="Search products..."
+            <form class="d-flex ms-auto me-3 navbar-search" style="max-width:260px;position:relative;" method="GET" action="{{ route('shop.index') }}">
+                <div class="input-group input-group-sm" style="position:relative;">
+                    <input type="text" id="navSearchInput" name="search" class="form-control" placeholder="Search products..."
                            value="{{ request('search') }}" autocomplete="off">
                     <button class="btn" type="submit"><i class="fas fa-search"></i></button>
                 </div>
+                <div id="searchDropdown" style="
+                    display:none;
+                    position:absolute;
+                    top:calc(100% + 6px);
+                    left:0; right:0;
+                    background:#fff;
+                    border-radius:0 0 10px 10px;
+                    border:1px solid #e0ccc9;
+                    border-top:3px solid #C3110C;
+                    box-shadow:0 8px 24px rgba(40,9,5,.18);
+                    z-index:9999;
+                    overflow:hidden;
+                    min-width:300px;
+                "></div>
             </form>
 
             <ul class="navbar-nav align-items-center gap-1">

@@ -207,7 +207,7 @@
             @if($product->image)
                 <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
             @else
-                <i class="fas fa-image product-image-placeholder"></i>
+                <img src="https://picsum.photos/seed/{{ $product->id }}/600/500" alt="{{ $product->name }}" style="width:100%;height:100%;object-fit:cover;">
             @endif
         </div>
     </div>
@@ -276,9 +276,7 @@
                     @if($rel->image)
                         <img src="{{ asset('storage/' . $rel->image) }}" alt="{{ $rel->name }}">
                     @else
-                        <div style="height:140px;background:#f5eeec;display:flex;align-items:center;justify-content:center;">
-                            <i class="fas fa-image" style="color:#c9a09a;font-size:2rem;"></i>
-                        </div>
+                        <img src="https://picsum.photos/seed/{{ $rel->id }}/300/140" alt="{{ $rel->name }}" style="width:100%;height:140px;object-fit:cover;display:block;">
                     @endif
                 </a>
                 <div class="related-card-body">

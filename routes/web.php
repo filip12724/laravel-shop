@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -10,8 +11,9 @@ use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 // Public shop routes
-Route::get('/', [ProductController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [ProductController::class, 'index'])->name('shop.index');
+Route::get('/search', [ProductController::class, 'search'])->name('search');
 Route::get('/shop/{product:slug}', [ProductController::class, 'show'])->name('shop.show');
 
 Route::get('/contact', [ContactController::class, 'create'])->name('contact');

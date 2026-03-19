@@ -2,57 +2,61 @@
 @section('title', 'Dashboard')
 
 @section('content')
+
+{{-- Stat cards --}}
 <div class="row">
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-info">
-            <div class="inner">
-                <h3>{{ $stats['users'] }}</h3>
-                <p>Users</p>
+    <div class="col-lg-3 col-sm-6">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon blue"><i class="fas fa-users"></i></div>
+            <div>
+                <div class="admin-stat-num">{{ $stats['users'] }}</div>
+                <div class="admin-stat-lbl">Total Users</div>
+                <a href="{{ route('admin.users.index') }}" class="admin-stat-link">Manage <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="icon"><i class="fas fa-users"></i></div>
-            <a href="{{ route('admin.users.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-success">
-            <div class="inner">
-                <h3>{{ $stats['products'] }}</h3>
-                <p>Products</p>
+    <div class="col-lg-3 col-sm-6">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon indigo"><i class="fas fa-box"></i></div>
+            <div>
+                <div class="admin-stat-num">{{ $stats['products'] }}</div>
+                <div class="admin-stat-lbl">Products</div>
+                <a href="{{ route('admin.products.index') }}" class="admin-stat-link">Manage <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="icon"><i class="fas fa-box"></i></div>
-            <a href="{{ route('admin.products.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-warning">
-            <div class="inner">
-                <h3>{{ $stats['orders'] }}</h3>
-                <p>Orders</p>
+    <div class="col-lg-3 col-sm-6">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon amber"><i class="fas fa-shopping-cart"></i></div>
+            <div>
+                <div class="admin-stat-num">{{ $stats['orders'] }}</div>
+                <div class="admin-stat-lbl">Orders</div>
+                <a href="{{ route('admin.orders.index') }}" class="admin-stat-link">View all <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="icon"><i class="fas fa-shopping-cart"></i></div>
-            <a href="{{ route('admin.orders.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger">
-            <div class="inner">
-                <h3>${{ number_format($stats['revenue'], 2) }}</h3>
-                <p>Revenue</p>
+    <div class="col-lg-3 col-sm-6">
+        <div class="admin-stat-card">
+            <div class="admin-stat-icon green"><i class="fas fa-dollar-sign"></i></div>
+            <div>
+                <div class="admin-stat-num">${{ number_format($stats['revenue'], 0) }}</div>
+                <div class="admin-stat-lbl">Revenue</div>
+                <a href="{{ route('admin.orders.index') }}" class="admin-stat-link">View orders <i class="fas fa-arrow-right"></i></a>
             </div>
-            <div class="icon"><i class="fas fa-dollar-sign"></i></div>
-            <a href="{{ route('admin.orders.index') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
     </div>
 </div>
 
+{{-- Recent orders + activity --}}
 <div class="row">
     <div class="col-md-7">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-shopping-cart mr-2"></i>Recent Orders</h3>
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h3 class="card-title"><i class="fas fa-shopping-cart mr-2" style="color:#4f46e5;"></i>Recent Orders</h3>
+                <a href="{{ route('admin.orders.index') }}" class="btn btn-sm btn-outline-secondary">View all</a>
             </div>
             <div class="card-body p-0">
-                <table class="table table-sm">
+                <table class="table mb-0">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -65,14 +69,14 @@
                     <tbody>
                         @forelse($recentOrders as $order)
                         <tr>
-                            <td><a href="{{ route('admin.orders.show', $order) }}">#{{ $order->id }}</a></td>
+                            <td><a href="{{ route('admin.orders.show', $order) }}" style="color:#4f46e5;font-weight:600;">#{{ $order->id }}</a></td>
                             <td>{{ $order->user->name }}</td>
-                            <td>${{ number_format($order->total, 2) }}</td>
+                            <td style="font-weight:600;">${{ number_format($order->total, 2) }}</td>
                             <td>@include('admin.partials.order-status', ['status' => $order->status])</td>
-                            <td>{{ $order->created_at->format('M d, Y') }}</td>
+                            <td style="color:#94a3b8;">{{ $order->created_at->format('M d, Y') }}</td>
                         </tr>
                         @empty
-                        <tr><td colspan="5" class="text-center text-muted">No orders yet.</td></tr>
+                        <tr><td colspan="5" class="text-center" style="color:#94a3b8;padding:24px;">No orders yet.</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -82,26 +86,28 @@
 
     <div class="col-md-5">
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title"><i class="fas fa-history mr-2"></i>Recent Activity</h3>
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h3 class="card-title"><i class="fas fa-history mr-2" style="color:#4f46e5;"></i>Recent Activity</h3>
+                <a href="{{ route('admin.logs.index') }}" class="btn btn-sm btn-outline-secondary">View all</a>
             </div>
             <div class="card-body p-0">
-                <ul class="list-group list-group-flush">
-                    @forelse($recentLogs as $log)
-                    <li class="list-group-item py-2 px-3">
-                        <small class="text-muted d-block">{{ $log->created_at->diffForHumans() }}</small>
-                        <span class="badge badge-secondary">{{ $log->action }}</span>
-                        {{ $log->description }}
-                    </li>
-                    @empty
-                    <li class="list-group-item text-muted text-center">No activity yet.</li>
-                    @endforelse
-                </ul>
-            </div>
-            <div class="card-footer text-center">
-                <a href="{{ route('admin.logs.index') }}">View all logs</a>
+                @forelse($recentLogs as $log)
+                <div style="padding:12px 20px;border-bottom:1px solid #f0f3f9;display:flex;gap:12px;align-items:flex-start;">
+                    <div style="width:8px;height:8px;background:#4f46e5;border-radius:50%;margin-top:6px;flex-shrink:0;"></div>
+                    <div>
+                        <div style="font-size:.82rem;color:#2d3748;">{{ $log->description }}</div>
+                        <div style="font-size:.75rem;color:#94a3b8;margin-top:2px;">
+                            <span class="badge badge-secondary" style="font-size:.68rem;">{{ $log->action }}</span>
+                            &nbsp;{{ $log->created_at->diffForHumans() }}
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div style="padding:24px;text-align:center;color:#94a3b8;font-size:.875rem;">No activity yet.</div>
+                @endforelse
             </div>
         </div>
     </div>
 </div>
+
 @endsection
