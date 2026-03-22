@@ -18,54 +18,97 @@
                     <h5 style="color:#fff;margin:0;font-weight:600;"><i class="fas fa-paper-plane me-2" style="color:#E6501B;"></i>Send a Message</h5>
                 </div>
                 <div class="card-body p-4">
-                    <form method="POST" action="{{ route('contact.store') }}">
+                    <form method="POST" action="{{ route('contact.store') }}" id="contactForm" novalidate>
                         @csrf
-
-                        @if($errors->any())
-                            <div class="alert" style="background:#fde8e8;border:1px solid #C3110C;color:#280905;border-radius:8px;">
-                                <ul class="mb-0">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
-                            </div>
-                        @endif
 
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label fw-semibold" style="color:#740A03;">Your Name *</label>
-                                <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
+                                <input type="text" name="name" id="contactName" class="form-control @error('name') is-invalid @enderror"
                                        style="border-color:#C3110C;border-radius:8px;"
-                                       value="{{ old('name', auth()->user()?->name) }}" required>
-                                @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                       value="{{ old('name', auth()->user()?->name) }}">
+                                @error('name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @else
+                                    <span class="contact-field-error" id="nameError" style="color:#C3110C;font-size:.82rem;display:none;"></span>
+                                @enderror
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold" style="color:#740A03;">Email Address *</label>
-                                <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
+                                <input type="email" name="email" id="contactEmail" class="form-control @error('email') is-invalid @enderror"
                                        style="border-color:#C3110C;border-radius:8px;"
-                                       value="{{ old('email', auth()->user()?->email) }}" required>
-                                @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                       value="{{ old('email', auth()->user()?->email) }}">
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @else
+                                    <span class="contact-field-error" id="emailError" style="color:#C3110C;font-size:.82rem;display:none;"></span>
+                                @enderror
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold" style="color:#740A03;">Subject *</label>
-                            <input type="text" name="subject" class="form-control @error('subject') is-invalid @enderror"
+                            <input type="text" name="subject" id="contactSubject" class="form-control @error('subject') is-invalid @enderror"
                                    style="border-color:#C3110C;border-radius:8px;"
-                                   value="{{ old('subject') }}" required>
-                            @error('subject')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                   value="{{ old('subject') }}">
+                            @error('subject')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @else
+                                <span class="contact-field-error" id="subjectError" style="color:#C3110C;font-size:.82rem;display:none;"></span>
+                            @enderror
                         </div>
 
                         <div class="mb-4">
                             <label class="form-label fw-semibold" style="color:#740A03;">
                                 Message * <small style="color:#888;font-weight:400;">(min. 20 characters)</small>
                             </label>
-                            <textarea name="message" class="form-control @error('message') is-invalid @enderror"
+                            <textarea name="message" id="contactMessage" class="form-control @error('message') is-invalid @enderror"
                                       style="border-color:#C3110C;border-radius:8px;"
-                                      rows="6" required minlength="20">{{ old('message') }}</textarea>
-                            @error('message')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                      rows="6">{{ old('message') }}</textarea>
+                            @error('message')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @else
+                                <span class="contact-field-error" id="messageError" style="color:#C3110C;font-size:.82rem;display:none;"></span>
+                            @enderror
                         </div>
 
                         <button type="submit" class="btn btn-primary px-5 py-2" style="border-radius:8px;font-weight:600;">
                             <i class="fas fa-paper-plane me-2"></i>Send Message
                         </button>
                     </form>
+
+                    <script>
+                    document.getElementById('contactForm').addEventListener('submit', function (e) {
+                        let valid = true;
+
+                        function fieldError(inputId, errorId, msg) {
+                            const el = document.getElementById(errorId);
+                            if (!el) return;
+                            if (msg) {
+                                el.textContent = msg;
+                                el.style.display = 'block';
+                                document.getElementById(inputId).style.borderColor = '#C3110C';
+                                valid = false;
+                            } else {
+                                el.style.display = 'none';
+                            }
+                        }
+
+                        const name    = document.getElementById('contactName').value.trim();
+                        const email   = document.getElementById('contactEmail').value.trim();
+                        const subject = document.getElementById('contactSubject').value.trim();
+                        const message = document.getElementById('contactMessage').value.trim();
+
+                        fieldError('contactName',    'nameError',    name    === '' ? 'Please enter your name.'    : null);
+                        fieldError('contactEmail',   'emailError',   email   === '' ? 'Please enter your email.'   :
+                                                                      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'Please enter a valid email address.' : null);
+                        fieldError('contactSubject', 'subjectError', subject === '' ? 'Please enter a subject.'   : null);
+                        fieldError('contactMessage', 'messageError', message === '' ? 'Please write your message.' :
+                                                                      message.length < 20 ? 'Message must be at least 20 characters.' : null);
+
+                        if (!valid) e.preventDefault();
+                    });
+                    </script>
                 </div>
             </div>
         </div>

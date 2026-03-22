@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Order;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -47,6 +48,17 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+
+        $activeOrders = Order::where('user_id', $user->id)
+            ->whereIn('status', ['pending', 'processing', 'shipped'])
+            ->count();
+
+        if ($activeOrders > 0) {
+            return Redirect::route('profile.edit')->withErrors(
+                ['active_orders' => "You have {$activeOrders} active order(s) that haven't been delivered yet. Please wait for all orders to be delivered or cancelled before deleting your account."],
+                'userDeletion'
+            );
+        }
 
         Auth::logout();
 

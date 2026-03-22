@@ -20,11 +20,11 @@
 
         {{-- Profile Information --}}
         <div class="card border-0 shadow-sm mb-4" style="border-radius:10px;overflow:hidden;">
-            <div class="card-header py-3" style="background:#f7f0ef;border-bottom:3px solid #C3110C;">
-                <h6 class="mb-0 fw-bold" style="color:#280905;">
-                    <i class="fas fa-user me-2" style="color:#C3110C;"></i>Profile Information
+            <div class="card-header py-3" style="background:linear-gradient(135deg,#280905,#740A03);border-bottom:none;">
+                <h6 class="mb-0 fw-bold" style="color:#fff;">
+                    <i class="fas fa-user me-2" style="color:#E6501B;"></i>Profile Information
                 </h6>
-                <small class="text-muted">Update your name and email address.</small>
+                <small style="color:#f5d5c8;opacity:.85;">Update your name and email address.</small>
             </div>
             <div class="card-body p-4">
                 @include('profile.partials.update-profile-information-form')
@@ -33,11 +33,11 @@
 
         {{-- Update Password --}}
         <div class="card border-0 shadow-sm mb-4" style="border-radius:10px;overflow:hidden;">
-            <div class="card-header py-3" style="background:#f7f0ef;border-bottom:3px solid #C3110C;">
-                <h6 class="mb-0 fw-bold" style="color:#280905;">
-                    <i class="fas fa-lock me-2" style="color:#C3110C;"></i>Update Password
+            <div class="card-header py-3" style="background:linear-gradient(135deg,#280905,#740A03);border-bottom:none;">
+                <h6 class="mb-0 fw-bold" style="color:#fff;">
+                    <i class="fas fa-lock me-2" style="color:#E6501B;"></i>Update Password
                 </h6>
-                <small class="text-muted">Use a long, random password to keep your account secure.</small>
+                <small style="color:#f5d5c8;opacity:.85;">Use a long, random password to keep your account secure.</small>
             </div>
             <div class="card-body p-4">
                 @include('profile.partials.update-password-form')
@@ -46,11 +46,11 @@
 
         {{-- Delete Account --}}
         <div class="card border-0 shadow-sm mb-4" style="border-radius:10px;overflow:hidden;">
-            <div class="card-header py-3" style="background:#fff5f5;border-bottom:3px solid #dc3545;">
-                <h6 class="mb-0 fw-bold" style="color:#7a1020;">
-                    <i class="fas fa-trash-alt me-2" style="color:#dc3545;"></i>Delete Account
+            <div class="card-header py-3" style="background:linear-gradient(135deg,#280905,#740A03);border-bottom:none;">
+                <h6 class="mb-0 fw-bold" style="color:#fff;">
+                    <i class="fas fa-trash-alt me-2" style="color:#E6501B;"></i>Delete Account
                 </h6>
-                <small class="text-muted">Permanently delete your account and all associated data.</small>
+                <small style="color:#f5d5c8;opacity:.85;">Permanently delete your account and all associated data.</small>
             </div>
             <div class="card-body p-4">
                 @include('profile.partials.delete-user-form')

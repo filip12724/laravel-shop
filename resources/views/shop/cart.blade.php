@@ -165,6 +165,37 @@
     <h2>Shopping Cart</h2>
 </div>
 
+{{-- Remove item confirmation modal --}}
+<div class="modal fade" id="removeItemModal" tabindex="-1" aria-labelledby="removeItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border:none; border-radius:10px; overflow:hidden; box-shadow:0 8px 32px rgba(40,9,5,.18);">
+            <div class="modal-header" style="background:linear-gradient(135deg,#280905,#740A03); border:none; padding:16px 22px;">
+                <h5 class="modal-title" id="removeItemModalLabel" style="color:#fff; font-weight:700; font-size:1rem; display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-trash" style="color:#E6501B;"></i> Remove Item
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="padding:24px 22px; color:#280905;">
+                <p style="margin:0; font-size:.95rem;">Are you sure you want to remove <strong id="removeItemName"></strong> from your cart?</p>
+            </div>
+            <div class="modal-footer" style="border-top:1px solid #f0e8e7; padding:14px 22px; gap:8px;">
+                <button type="button" class="btn" data-bs-dismiss="modal"
+                    style="border:1.5px solid #740A03; color:#740A03; background:transparent; border-radius:4px; font-weight:600; font-size:.875rem; padding:6px 18px; transition:all .2s;"
+                    onmouseover="this.style.background='#740A03';this.style.color='#fff';"
+                    onmouseout="this.style.background='transparent';this.style.color='#740A03';">
+                    Cancel
+                </button>
+                <button type="button" id="confirmRemoveBtn"
+                    style="border:none; background:#C3110C; color:#fff; border-radius:4px; font-weight:700; font-size:.875rem; padding:6px 18px; transition:background .2s; cursor:pointer;"
+                    onmouseover="this.style.background='#740A03';"
+                    onmouseout="this.style.background='#C3110C';">
+                    <i class="fas fa-trash me-1"></i> Remove
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @if($items->isEmpty())
     <div class="empty-cart">
         <i class="fas fa-shopping-cart fa-4x"></i>
@@ -215,8 +246,9 @@
                             <div class="qty-controls">
                                 <button class="qty-btn qty-minus" data-id="{{ $item->product->id }}">−</button>
                                 <input type="number" class="qty-value qty-input"
-                                       value="{{ $item->quantity }}" min="1" max="99"
+                                       value="{{ $item->quantity }}" min="1" max="{{ $item->product->stock }}"
                                        data-id="{{ $item->product->id }}"
+                                       data-stock="{{ $item->product->stock }}"
                                        data-url="{{ route('cart.update', $item->product) }}">
                                 <button class="qty-btn qty-plus" data-id="{{ $item->product->id }}">+</button>
                             </div>
@@ -315,6 +347,18 @@ function updateQty(productId, qty) {
     });
 }
 
+$(document).on('keydown', 'input.qty-input', function (e) {
+    // block minus, plus, e (scientific notation), dot, comma
+    if (['-', '+', 'e', 'E', '.', ','].includes(e.key)) e.preventDefault();
+});
+
+$(document).on('input', 'input.qty-input', function () {
+    this.value = this.value.replace(/[^0-9]/g, '');
+    const stock = parseInt($(this).data('stock'));
+    const val = parseInt(this.value);
+    if (!isNaN(val) && val > stock) this.value = stock;
+});
+
 $(document).on('click', '.qty-minus', function () {
     const id = $(this).data('id');
     const input = $(`input.qty-input[data-id="${id}"]`);
@@ -325,26 +369,40 @@ $(document).on('click', '.qty-minus', function () {
 $(document).on('click', '.qty-plus', function () {
     const id = $(this).data('id');
     const input = $(`input.qty-input[data-id="${id}"]`);
+    const stock = parseInt(input.data('stock'));
     const val = parseInt(input.val());
-    input.val(val + 1);
-    updateQty(id, val + 1);
+    if (val < stock) { input.val(val + 1); updateQty(id, val + 1); }
 });
 
 $(document).on('change', 'input.qty-input', function () {
     const id = $(this).data('id');
-    const val = parseInt($(this).val());
-    if (val >= 1) updateQty(id, val);
+    const stock = parseInt($(this).data('stock'));
+    let val = parseInt($(this).val());
+    if (isNaN(val) || val < 1) val = 1;
+    if (val > stock) val = stock;
+    $(this).val(val);
+    updateQty(id, val);
 });
 
+let pendingRemoveUrl = null;
+let pendingRemoveId  = null;
+
 $(document).on('click', '.btn-remove-item', function () {
-    const url = $(this).data('url');
-    const id  = $(this).data('id');
+    pendingRemoveUrl = $(this).data('url');
+    pendingRemoveId  = $(this).data('id');
+    const name = $(`#cart-row-${pendingRemoveId} .cart-product-link`).text().trim();
+    $('#removeItemName').text(name);
+    $('#removeItemModal').modal('show');
+});
+
+$('#confirmRemoveBtn').on('click', function () {
+    $('#removeItemModal').modal('hide');
     $.ajax({
-        url, type: 'DELETE',
+        url: pendingRemoveUrl, type: 'DELETE',
         data: { _token: '{{ csrf_token() }}' },
         success: function (res) {
             if (res.success) {
-                $(`#cart-row-${id}`).fadeOut(300, function () {
+                $(`#cart-row-${pendingRemoveId}`).fadeOut(300, function () {
                     $(this).remove();
                     $('#cartSubtotal').text('$' + res.cart_total);
                     $('#cartTotalFinal').text('$' + res.final_total);

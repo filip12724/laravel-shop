@@ -86,7 +86,7 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
-        $product->load(['category', 'reviews.user']);
+        $product->load(['category', 'reviews' => fn($q) => $q->with('user')->latest()]);
 
         $related = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)

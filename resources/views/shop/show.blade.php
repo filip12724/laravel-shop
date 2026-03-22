@@ -206,10 +206,13 @@
     }
     .btn-submit-review:hover { background: #740A03; }
     .review-error {
-        background: #fdf0f0; border: 1px solid #e0b0ad;
-        border-radius: 5px; padding: 8px 12px;
-        font-size: .82rem; color: #740A03; margin-bottom: 10px;
+        display: flex; align-items: flex-start; gap: 8px;
+        background: #fde8df; border-left: 3px solid #C3110C;
+        border-radius: 0 5px 5px 0; padding: 9px 12px;
+        font-size: .83rem; color: #280905; margin-bottom: 10px;
+        font-weight: 500;
     }
+    .review-error i { color: #C3110C; margin-top: 1px; flex-shrink: 0; }
 </style>
 @endpush
 
@@ -345,15 +348,15 @@
                 </span>
             </div>
             <div id="reviewsList">
-                @forelse($product->reviews as $review)
-                <div class="review-item">
+                @forelse($product->reviews as $i => $review)
+                <div class="review-item{{ $i >= 5 ? ' d-none extra-review' : '' }}">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <span class="review-author">{{ $review->user->name }}</span>
                         <span class="review-date">{{ $review->created_at->diffForHumans() }}</span>
                     </div>
                     <div class="review-stars">
-                        @for($i = 1; $i <= 5; $i++)
-                            <i class="fas fa-star{{ $i > $review->rating ? ' empty' : '' }}"></i>
+                        @for($j = 1; $j <= 5; $j++)
+                            <i class="fas fa-star{{ $j > $review->rating ? ' empty' : '' }}"></i>
                         @endfor
                     </div>
                     <div class="review-body">{{ $review->body }}</div>
@@ -364,6 +367,15 @@
                 </div>
                 @endforelse
             </div>
+            @if($product->reviews->count() > 5)
+            <div id="showMoreWrap" style="padding:12px 18px; border-top:1px solid #f0e8e7;">
+                <button id="showMoreReviews" style="background:transparent;border:1.5px solid #740A03;color:#740A03;border-radius:4px;padding:6px 16px;font-size:.875rem;font-weight:600;cursor:pointer;transition:all .2s;"
+                    onmouseover="this.style.background='#740A03';this.style.color='#fff';"
+                    onmouseout="this.style.background='transparent';this.style.color='#740A03';">
+                    <i class="fas fa-chevron-down me-1"></i>Show {{ $product->reviews->count() - 5 }} more review{{ $product->reviews->count() - 5 == 1 ? '' : 's' }}
+                </button>
+            </div>
+            @endif
         </div>
     </div>
 
@@ -388,10 +400,12 @@
                     <div class="mb-3">
                         <div style="font-size:.8rem;font-weight:600;color:#740A03;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Your Review</div>
                         <textarea name="body" class="review-textarea"
-                                  placeholder="Share your experience with this product..."
-                                  required minlength="10"></textarea>
+                                  placeholder="Share your experience with this product..."></textarea>
                     </div>
-                    <div id="reviewError" class="review-error" style="display:none;"></div>
+                    <div id="reviewError" class="review-error" style="display:none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="reviewErrorText"></span>
+                    </div>
                     <button type="submit" class="btn-submit-review">
                         <i class="fas fa-paper-plane"></i> Submit Review
                     </button>
@@ -456,6 +470,12 @@ $('#addToCartBtn').on('click', function () {
     });
 });
 
+// Show more reviews
+$('#showMoreReviews').on('click', function () {
+    $('.extra-review').removeClass('d-none');
+    $('#showMoreWrap').remove();
+});
+
 // Star rating
 let selectedRating = 0;
 $('#starRating i').on('mouseover', function () {
@@ -474,11 +494,25 @@ $('#starRating i').on('mouseover', function () {
     $('#ratingInput').val(selectedRating);
 });
 
+function showReviewError(msg) {
+    $('#reviewErrorText').text(msg);
+    $('#reviewError').show();
+}
+
 // Submit review
 $('#reviewForm').on('submit', function (e) {
     e.preventDefault();
+    const body = $('textarea[name="body"]').val().trim();
+    if (body.length === 0) {
+        showReviewError('Please write your review before submitting.');
+        return;
+    }
+    if (body.length < 10) {
+        showReviewError('Your review must be at least 10 characters.');
+        return;
+    }
     if (selectedRating === 0) {
-        $('#reviewError').text('Please select a star rating.').show();
+        showReviewError('Please select a star rating.');
         return;
     }
     $.post($(this).data('url'), $(this).serialize(), function (res) {
@@ -502,7 +536,7 @@ $('#reviewForm').on('submit', function (e) {
             $('#reviewError').hide();
         }
     }).fail(function (xhr) {
-        $('#reviewError').text(xhr.responseJSON?.message ?? 'Error submitting review.').show();
+        showReviewError(xhr.responseJSON?.message ?? 'Something went wrong. Please try again.');
     });
 });
 </script>
