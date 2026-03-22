@@ -222,9 +222,22 @@
             </div>
             @endforeach
             <div class="summary-item">
-                <span style="color:#555;">Shipping</span>
-                <span style="color:#198754; font-weight:600;"><i class="fas fa-check-circle me-1" style="font-size:.8rem;"></i>Free</span>
+                <span style="color:#555;">Subtotal</span>
+                <span style="font-weight:600;color:#280905;">${{ number_format($subtotal, 2) }}</span>
             </div>
+            <div class="summary-item">
+                <span style="color:#555;">Shipping</span>
+                @if($shipping == 0)
+                    <span style="color:#C3110C;font-weight:600;"><i class="fas fa-check-circle me-1" style="font-size:.8rem;"></i>Free</span>
+                @else
+                    <span style="font-weight:600;color:#280905;">${{ number_format($shipping, 2) }}</span>
+                @endif
+            </div>
+            @if($shipping > 0)
+            <div style="padding:6px 18px 10px;font-size:.75rem;color:#888;">
+                <i class="fas fa-info-circle me-1"></i>Add ${{ number_format(50 - $subtotal, 2) }} more for free shipping
+            </div>
+            @endif
             <div class="summary-total">
                 <span>Total</span>
                 <span>${{ number_format($total, 2) }}</span>

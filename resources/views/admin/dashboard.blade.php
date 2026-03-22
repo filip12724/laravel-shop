@@ -70,7 +70,7 @@
                         @forelse($recentOrders as $order)
                         <tr>
                             <td><a href="{{ route('admin.orders.show', $order) }}" style="color:#4f46e5;font-weight:600;">#{{ $order->id }}</a></td>
-                            <td>{{ $order->user->name }}</td>
+                            <td>{{ $order->user?->name ?? $order->guest_email ?? 'Guest' }}</td>
                             <td style="font-weight:600;">${{ number_format($order->total, 2) }}</td>
                             <td>@include('admin.partials.order-status', ['status' => $order->status])</td>
                             <td style="color:#94a3b8;">{{ $order->created_at->format('M d, Y') }}</td>

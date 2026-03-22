@@ -92,8 +92,8 @@
                 <tr>
                     <td style="font-weight:700;color:#4f46e5;">#{{ $order->id }}</td>
                     <td>
-                        <div style="font-weight:600;font-size:.875rem;">{{ $order->user->name }}</div>
-                        <small style="color:#94a3b8;">{{ $order->user->email }}</small>
+                        <div style="font-weight:600;font-size:.875rem;">{{ $order->user?->name ?? 'Guest' }}</div>
+                        <small style="color:#94a3b8;">{{ $order->user?->email ?? $order->guest_email ?? '—' }}</small>
                     </td>
                     <td style="font-weight:700;">${{ number_format($order->total, 2) }}</td>
                     <td>@include('admin.partials.order-status', ['status' => $order->status])</td>

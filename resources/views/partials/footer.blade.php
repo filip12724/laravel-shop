@@ -4,7 +4,7 @@
         <div class="row">
             <div class="col-md-4 mb-3">
                 <h6 class="fw-bold mb-2" style="color: #fff;">
-                    <i class="fas fa-shopping-bag me-2" style="color: #E6501B;"></i>Laravel Shop
+                    <i class="fas fa-shopping-bag me-2" style="color: #E6501B;"></i>WildCart
                 </h6>
                 <p style="color: #c9a09a; font-size: .875rem; margin-bottom: 0;">
                     Your one-stop shop for quality products at great prices.
@@ -16,20 +16,15 @@
                     Quick Links
                 </h6>
                 <ul class="list-unstyled mb-0">
-                    <li class="mb-1">
-                        <a href="{{ route('shop.index') }}"
+                    @foreach($mainNavLinks as $link)
+                    <li class="{{ !$loop->last ? 'mb-1' : '' }}">
+                        <a href="{{ route($link['route']) }}"
                            style="color: #c9a09a; text-decoration: none; font-size: .875rem;"
                            onmouseover="this.style.color='#E6501B'" onmouseout="this.style.color='#c9a09a'">
-                            <i class="fas fa-store me-1" style="font-size:.75rem;"></i> Shop
+                            <i class="fas {{ $link['icon'] }} me-1" style="font-size:.75rem;"></i> {{ $link['label'] }}
                         </a>
                     </li>
-                    <li>
-                        <a href="{{ route('contact') }}"
-                           style="color: #c9a09a; text-decoration: none; font-size: .875rem;"
-                           onmouseover="this.style.color='#E6501B'" onmouseout="this.style.color='#c9a09a'">
-                            <i class="fas fa-envelope me-1" style="font-size:.75rem;"></i> Contact
-                        </a>
-                    </li>
+                    @endforeach
                 </ul>
             </div>
 
@@ -75,7 +70,7 @@
 
         <div style="border-top: 1px solid #4a1208; margin-top: .5rem; padding-top: 1rem; text-align: center;">
             <p style="color: #8a4040; font-size: .8rem; margin: 0;">
-                &copy; {{ date('Y') }} Laravel Shop &mdash; All rights reserved.
+                &copy; {{ date('Y') }} WildCart &mdash; All rights reserved.
             </p>
         </div>
     </div>

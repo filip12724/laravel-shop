@@ -3,7 +3,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark navbar-shop">
     <div class="container">
         <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-            <i class="fas fa-shopping-bag me-2"></i>Laravel Shop
+            <i class="fas fa-shopping-bag me-2"></i>WildCart
         </a>
 
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
@@ -12,24 +12,14 @@
 
         <div class="collapse navbar-collapse" id="mainNav">
             <ul class="navbar-nav me-3">
+                @foreach($mainNavLinks as $link)
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}"
-                       href="{{ route('home') }}">
-                        <i class="fas fa-home me-1" style="font-size:.8rem;opacity:.8;"></i>Home
+                    <a class="nav-link {{ request()->routeIs(...$link['active']) ? 'active' : '' }}"
+                       href="{{ route($link['route']) }}">
+                        <i class="fas {{ $link['icon'] }} me-1" style="font-size:.8rem;opacity:.8;"></i>{{ $link['label'] }}
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('shop.index', 'shop.show') ? 'active' : '' }}"
-                       href="{{ route('shop.index') }}">
-                        <i class="fas fa-store me-1" style="font-size:.8rem;opacity:.8;"></i>Shop
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}"
-                       href="{{ route('contact') }}">
-                        <i class="fas fa-envelope me-1" style="font-size:.8rem;opacity:.8;"></i>Contact
-                    </a>
-                </li>
+                @endforeach
             </ul>
 
             {{-- Search --}}

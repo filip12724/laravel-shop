@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="{{ route('admin.dashboard') }}" class="brand-link">
         <span class="brand-text">
-            <i class="fas fa-shopping-bag mr-2"></i>Laravel Shop
+            <i class="fas fa-shopping-bag mr-2"></i>WildCart
         </span>
     </a>
 

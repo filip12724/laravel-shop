@@ -30,9 +30,11 @@ class OrderController extends Controller
             'quantity' => $qty,
         ])->filter(fn($i) => $i->product !== null);
 
-        $total = $items->sum(fn($i) => $i->product->price * $i->quantity);
+        $subtotal = $items->sum(fn($i) => $i->product->price * $i->quantity);
+        $shipping = $subtotal >= 50 ? 0 : 5.99;
+        $total    = $subtotal + $shipping;
 
-        return view('shop.checkout', compact('items', 'total'));
+        return view('shop.checkout', compact('items', 'subtotal', 'shipping', 'total'));
     }
 
     public function store(Request $request)
@@ -57,8 +59,10 @@ class OrderController extends Controller
             return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
         }
 
-        $products = Product::whereIn('id', array_keys($cart))->get()->keyBy('id');
-        $total    = array_reduce(array_keys($cart), fn($carry, $id) => $carry + ($products[$id]->price ?? 0) * $cart[$id], 0);
+        $products  = Product::whereIn('id', array_keys($cart))->get()->keyBy('id');
+        $subtotal  = array_reduce(array_keys($cart), fn($carry, $id) => $carry + ($products[$id]->price ?? 0) * $cart[$id], 0);
+        $shipping  = $subtotal >= 50 ? 0 : 5.99;
+        $total     = $subtotal + $shipping;
 
         $order = Order::create([
             'user_id'          => Auth::id(),
@@ -79,6 +83,7 @@ class OrderController extends Controller
                 'quantity'   => $qty,
                 'price'      => $products[$productId]->price,
             ]);
+            $products[$productId]->decrement('stock', $qty);
         }
 
         session()->forget('cart');

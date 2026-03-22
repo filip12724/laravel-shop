@@ -118,7 +118,7 @@
         color: #280905;
     }
     .summary-row.total-row span:last-child { color: #C3110C; }
-    .free-shipping { color: #198754; font-weight: 600; }
+    .free-shipping { color: #C3110C; font-weight: 600; }
 
     .btn-checkout {
         display: block;
@@ -255,11 +255,20 @@
             <div class="summary-body">
                 <div class="summary-row">
                     <span style="color:#555;">Subtotal</span>
-                    <span id="cartTotal">${{ number_format($total, 2) }}</span>
+                    <span id="cartSubtotal">${{ number_format($subtotal, 2) }}</span>
                 </div>
                 <div class="summary-row">
                     <span style="color:#555;">Shipping</span>
-                    <span class="free-shipping"><i class="fas fa-check-circle me-1" style="font-size:.8rem;"></i>Free</span>
+                    <span id="cartShipping">
+                        @if($shipping == 0)
+                            <span class="free-shipping"><i class="fas fa-check-circle me-1" style="font-size:.8rem;"></i>Free</span>
+                        @else
+                            ${{ number_format($shipping, 2) }}
+                        @endif
+                    </span>
+                </div>
+                <div id="freeShippingHint" class="summary-row" style="{{ $shipping == 0 ? 'display:none;' : '' }}font-size:.75rem;color:#888;margin-top:-6px;">
+                    <span><i class="fas fa-info-circle me-1"></i>Add ${{ number_format(50 - $subtotal, 2) }} more for free shipping</span>
                 </div>
                 <div class="summary-row total-row">
                     <span>Total</span>
@@ -277,6 +286,17 @@
 
 @push('scripts')
 <script>
+function updateShippingDisplay(shipping, subtotal) {
+    if (shipping === 0) {
+        $('#cartShipping').html('<span class="free-shipping"><i class="fas fa-check-circle me-1" style="font-size:.8rem;"></i>Free</span>');
+        $('#freeShippingHint').hide();
+    } else {
+        $('#cartShipping').text('$' + shipping.toFixed(2));
+        const needed = (50 - subtotal).toFixed(2);
+        $('#freeShippingHint').html('<span><i class="fas fa-info-circle me-1"></i>Add $' + needed + ' more for free shipping</span>').show();
+    }
+}
+
 function updateQty(productId, qty) {
     const url = $(`input.qty-input[data-id="${productId}"]`).data('url');
     $.ajax({
@@ -285,7 +305,9 @@ function updateQty(productId, qty) {
         success: function (res) {
             if (res.success) {
                 $(`.item-total-${productId}`).text('$' + res.item_total);
-                $('#cartTotal, #cartTotalFinal').text('$' + res.cart_total);
+                $('#cartSubtotal').text('$' + res.cart_total);
+                $('#cartTotalFinal').text('$' + res.final_total);
+                updateShippingDisplay(res.shipping, parseFloat(res.cart_total));
                 const total = $('input.qty-input').toArray().reduce((s, el) => s + parseInt($(el).val()), 0);
                 $('#cartCount').text(total).toggle(total > 0);
             }
@@ -324,7 +346,9 @@ $(document).on('click', '.btn-remove-item', function () {
             if (res.success) {
                 $(`#cart-row-${id}`).fadeOut(300, function () {
                     $(this).remove();
-                    $('#cartTotal, #cartTotalFinal').text('$' + res.cart_total);
+                    $('#cartSubtotal').text('$' + res.cart_total);
+                    $('#cartTotalFinal').text('$' + res.final_total);
+                    updateShippingDisplay(res.shipping, parseFloat(res.cart_total));
                     const count = parseInt(res.cart_count);
                     if (count === 0) { $('#cartCount').hide(); location.reload(); }
                     else { $('#cartCount').text(count); }

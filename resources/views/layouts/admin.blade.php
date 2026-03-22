@@ -316,7 +316,7 @@
         <div class="content-header">
             <div class="container-fluid d-flex align-items-center justify-content-between">
                 <h1 class="m-0">@yield('title', 'Dashboard')</h1>
-                <small class="text-muted">Laravel Shop Admin</small>
+                <small class="text-muted">WildCart Admin</small>
             </div>
         </div>
         <div class="content">
@@ -328,7 +328,7 @@
     </div>
 
     <footer class="main-footer">
-        <strong>Laravel Shop Admin</strong> &copy; {{ date('Y') }} &mdash; All rights reserved.
+        <strong>WildCart Admin</strong> &copy; {{ date('Y') }} &mdash; All rights reserved.
     </footer>
 
 </div>

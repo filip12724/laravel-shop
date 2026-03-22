@@ -16,7 +16,7 @@
 
     <hr>
     <p style="color:#999;font-size:12px;">
-        This message was sent via the Laravel Shop contact form.
+        This message was sent via the WildCart contact form.
         Reply directly to {{ $contact->email }}.
     </p>
 </body>

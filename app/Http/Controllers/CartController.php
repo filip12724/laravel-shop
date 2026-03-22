@@ -30,9 +30,11 @@ class CartController extends Controller
             'quantity' => $qty,
         ])->filter(fn($item) => $item->product !== null)->values();
 
-        $total = $items->sum(fn($item) => $item->product->price * $item->quantity);
+        $subtotal = $items->sum(fn($item) => $item->product->price * $item->quantity);
+        $shipping = $subtotal >= 50 ? 0 : 5.99;
+        $total    = $subtotal + $shipping;
 
-        return view('shop.cart', compact('items', 'total'));
+        return view('shop.cart', compact('items', 'subtotal', 'shipping', 'total'));
     }
 
     public function add(Request $request, Product $product)
@@ -65,12 +67,15 @@ class CartController extends Controller
         session()->put('cart', $cart);
 
         $products = Product::whereIn('id', array_keys($cart))->get()->keyBy('id');
-        $total    = array_reduce(array_keys($cart), fn($carry, $id) => $carry + ($products[$id]->price ?? 0) * $cart[$id], 0);
+        $subtotal = array_reduce(array_keys($cart), fn($carry, $id) => $carry + ($products[$id]->price ?? 0) * $cart[$id], 0);
+        $shipping = $subtotal >= 50 ? 0 : 5.99;
 
         return response()->json([
             'success'    => true,
             'item_total' => number_format(($products[$product->id]->price ?? 0) * $request->quantity, 2),
-            'cart_total' => number_format($total, 2),
+            'cart_total' => number_format($subtotal, 2),
+            'shipping'   => $shipping,
+            'final_total'=> number_format($subtotal + $shipping, 2),
         ]);
     }
 
@@ -81,12 +86,15 @@ class CartController extends Controller
         session()->put('cart', $cart);
 
         $products = Product::whereIn('id', array_keys($cart))->get()->keyBy('id');
-        $total    = array_reduce(array_keys($cart), fn($carry, $id) => $carry + ($products[$id]->price ?? 0) * $cart[$id], 0);
+        $subtotal = array_reduce(array_keys($cart), fn($carry, $id) => $carry + ($products[$id]->price ?? 0) * $cart[$id], 0);
+        $shipping = $subtotal >= 50 ? 0 : 5.99;
 
         return response()->json([
             'success'    => true,
             'cart_count' => self::cartCount(),
-            'cart_total' => number_format($total, 2),
+            'cart_total' => number_format($subtotal, 2),
+            'shipping'   => $shipping,
+            'final_total'=> number_format($subtotal + $shipping, 2),
         ]);
     }
 }

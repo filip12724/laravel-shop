@@ -65,40 +65,66 @@
         font-weight: 700;
         margin-bottom: 20px;
     }
-    .stock-in  { background: #d1e7dd; color: #0a3622; }
+    .stock-in  { background: #fde8df; color: #740A03; }
     .stock-out { background: #f8d7da; color: #58151c; }
 
     /* Qty + Add to cart */
-    .purchase-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .purchase-row { display: flex; align-items: center; gap: 10px; }
     .qty-wrap { display: flex; align-items: center; border: 2px solid #e0b0ad; border-radius: 6px; overflow: hidden; }
     .qty-wrap button {
         background: #f5eeec; border: none;
-        width: 38px; height: 42px;
-        font-size: 1.1rem; font-weight: 700;
+        width: 34px; height: 38px;
+        font-size: 1rem; font-weight: 700;
         color: #740A03; cursor: pointer;
         transition: background .15s;
     }
     .qty-wrap button:hover { background: #e0b0ad; }
     .qty-wrap input {
-        width: 52px; height: 42px;
+        width: 46px; height: 38px;
         border: none; border-left: 1px solid #e0b0ad; border-right: 1px solid #e0b0ad;
-        text-align: center; font-size: .95rem; font-weight: 700;
+        text-align: center; font-size: .9rem; font-weight: 700;
         color: #280905; background: #fff;
     }
     .qty-wrap input:focus { outline: none; }
     .btn-add-cart-lg {
-        flex: 1; min-width: 160px;
-        padding: 11px 20px;
+        padding: 9px 22px;
         background: #C3110C;
         color: #fff; border: none;
         border-radius: 6px;
-        font-weight: 700; font-size: .95rem;
+        font-weight: 700; font-size: .9rem;
         cursor: pointer;
-        display: flex; align-items: center; justify-content: center; gap: 8px;
+        display: inline-flex; align-items: center; gap: 7px;
         transition: background .2s;
+        white-space: nowrap;
     }
     .btn-add-cart-lg:hover { background: #740A03; }
     .btn-add-cart-lg:disabled { background: #C3110C; opacity: .8; cursor: not-allowed; }
+
+    /* Perks */
+    .product-perks {
+        margin-top: 22px;
+        border-top: 1px solid #f0e8e7;
+        padding-top: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .perk-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: .84rem;
+        color: #555;
+    }
+    .perk-icon {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        background: #fde8df;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+        color: #C3110C;
+        font-size: .8rem;
+    }
 
     /* Divider */
     .product-divider { border: none; border-top: 1px solid #f0e8e7; margin: 28px 0; }
@@ -259,6 +285,21 @@
             </button>
         </div>
         @endif
+
+        <div class="product-perks">
+            <div class="perk-item">
+                <div class="perk-icon"><i class="fas fa-truck"></i></div>
+                <span>Free shipping on orders over <strong>$50</strong></span>
+            </div>
+            <div class="perk-item">
+                <div class="perk-icon"><i class="fas fa-shield-alt"></i></div>
+                <span>Secure checkout &amp; encrypted payments</span>
+            </div>
+            <div class="perk-item">
+                <div class="perk-icon"><i class="fas fa-undo-alt"></i></div>
+                <span>Easy returns &amp; hassle-free refunds</span>
+            </div>
+        </div>
     </div>
 </div>
 

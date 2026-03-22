@@ -530,7 +530,7 @@
                         <div class="d-flex align-items-center justify-content-between">
                             <span class="prod-price">${{ number_format($product->price, 2) }}</span>
                             @if($product->stock > 0)
-                                <small style="color:#5a9a6a;font-size:.75rem;font-weight:600;">
+                                <small style="color:#C3110C;font-size:.75rem;font-weight:600;">
                                     <i class="fas fa-check-circle me-1"></i>In Stock
                                 </small>
                             @else
@@ -649,7 +649,7 @@ function makeSlider(trackId, prevId, nextId, dotsId) {
     function goTo(page) {
         const pages = totalPages();
         current = Math.max(0, Math.min(page, pages - 1));
-        const pct = current * (visibleCount() / slides.length) * 100;
+        const pct = current * 100;
         track.style.transform = `translateX(-${pct}%)`;
         prevBtn.disabled = current === 0;
         nextBtn.disabled = current === pages - 1;

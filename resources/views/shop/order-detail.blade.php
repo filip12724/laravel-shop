@@ -225,6 +225,24 @@
             @endforeach
         </tbody>
         <tfoot>
+            @php
+                $subtotal = $order->items->sum(fn($i) => $i->price * $i->quantity);
+                $shipping = round($order->total - $subtotal, 2);
+            @endphp
+            <tr>
+                <th colspan="3" class="text-end" style="font-weight:600;font-size:.88rem;color:#555;">Subtotal</th>
+                <th style="font-weight:600;color:#280905;">${{ number_format($subtotal, 2) }}</th>
+            </tr>
+            <tr>
+                <th colspan="3" class="text-end" style="font-weight:600;font-size:.88rem;color:#555;">Shipping</th>
+                <th>
+                    @if($shipping <= 0)
+                        <span style="color:#C3110C;font-weight:600;"><i class="fas fa-check-circle me-1" style="font-size:.8rem;"></i>Free</span>
+                    @else
+                        <span style="font-weight:600;color:#280905;">${{ number_format($shipping, 2) }}</span>
+                    @endif
+                </th>
+            </tr>
             <tr>
                 <th colspan="3" class="text-end">Order Total</th>
                 <th class="total-amount">${{ number_format($order->total, 2) }}</th>

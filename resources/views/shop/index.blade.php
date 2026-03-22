@@ -99,7 +99,7 @@
         align-items: center;
         margin-bottom: 16px;
         flex-wrap: wrap;
-        background: linear-gradient(90deg, #280905 0%, #3d0c07 100%);
+        background: linear-gradient(135deg, #280905, #740A03);
         border-bottom: 3px solid #C3110C;
         border-radius: 8px;
         padding: 10px 14px;
@@ -397,6 +397,7 @@ $(document).on('click', '.sort-dropdown-item', function () {
 // Clear all
 $('#clearFilters').on('click', function () {
     $('#shopSearch').val('');
+    $('#navSearchInput').val('');
     $('input.filter-checkbox').prop('checked', false);
     $('#priceMin').val('');
     $('#priceMax').val('');

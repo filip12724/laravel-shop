@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -17,6 +18,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+
+        View::share('mainNavLinks', [
+            ['label' => 'Home',    'route' => 'home',       'icon' => 'fa-home',     'active' => ['home']],
+            ['label' => 'Shop',    'route' => 'shop.index',  'icon' => 'fa-store',    'active' => ['shop.index', 'shop.show']],
+            ['label' => 'Contact', 'route' => 'contact',     'icon' => 'fa-envelope', 'active' => ['contact']],
+        ]);
 
         Event::listen(Registered::class, function (Registered $event) {
             ActivityLog::log('user_registered', "New user registered: '{$event->user->name}' ({$event->user->email})", $event->user->id);
