@@ -7,7 +7,8 @@
         <div class="auth-body">
 
             @if (session('status'))
-                <div class="alert alert-success py-2 mb-3" role="alert">
+                <div style="background:#fdf5f4;border-left:4px solid #C3110C;border-radius:6px;padding:10px 14px;margin-bottom:1rem;font-size:.875rem;color:#740A03;display:flex;align-items:center;gap:8px;">
+                    <i class="fas fa-check-circle" style="color:#C3110C;"></i>
                     {{ session('status') }}
                 </div>
             @endif

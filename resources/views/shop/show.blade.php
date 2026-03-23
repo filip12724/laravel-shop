@@ -248,7 +248,7 @@
 
         <h1 class="product-title">{{ $product->name }}</h1>
 
-        @php $avg = round($product->reviews->avg('rating'), 1); @endphp
+        @php $avg = round($product->average_rating, 1); @endphp
         <div class="rating-row">
             <div class="stars">
                 @for($i = 1; $i <= 5; $i++)

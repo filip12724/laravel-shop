@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', config('app.name') . ' — Home')
+@section('title', 'WildCart')
 
 @push('styles')
 <style>

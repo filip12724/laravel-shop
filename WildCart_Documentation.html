@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WildCart — Project Documentation</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #1e293b;
+      background: #f8fafc;
+      padding: 40px 60px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 2rem; color: #280905; border-bottom: 3px solid #C3110C; padding-bottom: 10px; margin-bottom: 6px; }
+    h2 { font-size: 1.25rem; color: #fff; background: linear-gradient(135deg, #280905, #740A03); padding: 8px 14px; border-radius: 6px; margin: 36px 0 12px; }
+    h3 { font-size: 1rem; color: #740A03; margin: 18px 0 6px; border-left: 3px solid #C3110C; padding-left: 10px; }
+    h4 { font-size: .9rem; color: #1e293b; margin: 12px 0 4px; font-weight: 700; }
+    p { margin-bottom: 8px; }
+    ul, ol { padding-left: 22px; margin-bottom: 8px; }
+    li { margin-bottom: 3px; }
+    code {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: .85em;
+      color: #7c3aed;
+    }
+    pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 14px 18px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 10px 0 14px;
+      font-size: .82em;
+      line-height: 1.6;
+    }
+    pre code { background: none; border: none; color: inherit; padding: 0; font-size: inherit; }
+    .badge {
+      display: inline-block;
+      background: #fde8df;
+      color: #740A03;
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: .78rem;
+      font-weight: 700;
+      margin: 2px 2px;
+    }
+    .badge.green { background: #dcfce7; color: #166534; }
+    .badge.blue  { background: #dbeafe; color: #1e40af; }
+    .badge.gray  { background: #f1f5f9; color: #475569; }
+    .badge.purple{ background: #ede9fe; color: #5b21b6; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px;
+      font-size: .85rem;
+    }
+    th {
+      background: #280905;
+      color: #fff;
+      text-align: left;
+      padding: 7px 10px;
+    }
+    td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    tr:nth-child(even) td { background: #f8fafc; }
+    .subtitle { color: #64748b; font-size: .95rem; margin-bottom: 28px; }
+    .note {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 8px 14px;
+      border-radius: 0 6px 6px 0;
+      margin: 10px 0;
+      font-size: .88rem;
+    }
+    .diagram {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 10px 0;
+      font-family: 'Consolas', monospace;
+      font-size: .82em;
+      line-height: 1.8;
+    }
+    @media print {
+      body { padding: 20px 30px; background: #fff; }
+      h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      th  { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      pre { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>WildCart — Project Documentation</h1>
+<p class="subtitle">Full-stack Laravel e-commerce application &nbsp;|&nbsp; Laravel 11 &middot; Blade &middot; Bootstrap 5 &middot; AdminLTE 3</p>
+
+<!-- ===== 1. OVERVIEW ===== -->
+<h2>1. Project Overview</h2>
+<p>WildCart is a fully functional e-commerce web application built with the <strong>Laravel</strong> PHP framework. It has two distinct areas:</p>
+<ul>
+  <li><strong>Customer-facing shop</strong> — browsing products, cart, checkout (guests & logged-in users), order history, reviews, contact form.</li>
+  <li><strong>Admin panel</strong> — managing products, categories, orders, users, contact messages, and viewing activity logs.</li>
+</ul>
+<p>The frontend uses <strong>Bootstrap 5</strong> for the shop and <strong>AdminLTE 3 (Bootstrap 4)</strong> for the admin. All dynamic interactions (cart updates, live search, status changes) use <strong>AJAX via jQuery</strong> — no full-page reloads.</p>
+
+<!-- ===== 2. DATABASE ===== -->
+<h2>2. Database — Models &amp; Relationships</h2>
+<p>The database has 8 tables. Below is a summary of each model and how they relate to each other.</p>
+
+<table>
+  <tr><th>Model / Table</th><th>Key Columns</th><th>Relationships</th></tr>
+  <tr>
+    <td><strong>User</strong><br><code>users</code></td>
+    <td><code>name</code>, <code>email</code>, <code>password</code>, <code>role</code></td>
+    <td>hasMany Orders, Reviews, ActivityLogs, CartItems</td>
+  </tr>
+  <tr>
+    <td><strong>Category</strong><br><code>categories</code></td>
+    <td><code>name</code>, <code>slug</code></td>
+    <td>hasMany Products</td>
+  </tr>
+  <tr>
+    <td><strong>Product</strong><br><code>products</code></td>
+    <td><code>category_id</code>, <code>name</code>, <code>slug</code>, <code>description</code>, <code>price</code>, <code>stock</code>, <code>image</code>, <code>active</code></td>
+    <td>belongsTo Category; hasMany Reviews, OrderItems, CartItems</td>
+  </tr>
+  <tr>
+    <td><strong>Order</strong><br><code>orders</code></td>
+    <td><code>user_id</code> (nullable), <code>guest_email</code>, <code>status</code>, <code>total</code>, shipping fields, <code>notes</code></td>
+    <td>belongsTo User; hasMany OrderItems</td>
+  </tr>
+  <tr>
+    <td><strong>OrderItem</strong><br><code>order_items</code></td>
+    <td><code>order_id</code>, <code>product_id</code>, <code>quantity</code>, <code>price</code></td>
+    <td>belongsTo Order, Product</td>
+  </tr>
+  <tr>
+    <td><strong>Review</strong><br><code>reviews</code></td>
+    <td><code>product_id</code>, <code>user_id</code>, <code>rating</code> (1–5), <code>body</code></td>
+    <td>belongsTo Product, User</td>
+  </tr>
+  <tr>
+    <td><strong>ActivityLog</strong><br><code>activity_logs</code></td>
+    <td><code>user_id</code>, <code>action</code>, <code>description</code>, <code>ip_address</code></td>
+    <td>belongsTo User</td>
+  </tr>
+  <tr>
+    <td><strong>ContactMessage</strong><br><code>contact_messages</code></td>
+    <td><code>name</code>, <code>email</code>, <code>subject</code>, <code>message</code></td>
+    <td>(none)</td>
+  </tr>
+</table>
+
+<h3>Why <code>user_id</code> is nullable on orders</h3>
+<p>The site allows <strong>guest checkout</strong> — a user can place an order without an account. In that case <code>user_id</code> is <code>NULL</code> and a <code>guest_email</code> is stored instead. This was added via a dedicated migration after the initial table creation:</p>
+<pre><code>// migration: make_order_user_nullable_add_guest_email
+$table->foreignId('user_id')->nullable()->change();
+$table->string('guest_email')->nullable()->after('user_id');</code></pre>
+
+<h3>The <code>role</code> column on users</h3>
+<p>Rather than a separate roles table, users have a simple <code>role</code> string column (value: <code>"user"</code> or <code>"admin"</code>). The <code>User</code> model exposes a helper method:</p>
+<pre><code>public function isAdmin(): bool
+{
+    return $this->role === 'admin';
+}</code></pre>
+
+<h3>Accessor — <code>average_rating</code> on Product</h3>
+<p>The <code>Product</code> model has a computed attribute that calculates the average review rating on the fly, without storing it in the database:</p>
+<pre><code>public function getAverageRatingAttribute()
+{
+    return $this->reviews()->avg('rating') ?? 0;
+}</code></pre>
+<p>In Blade templates you can then access it as <code>$product->average_rating</code> — Laravel automatically maps <code>getXxxAttribute()</code> methods to property access.</p>
+
+<!-- ===== 3. ROUTES ===== -->
+<h2>3. Routes</h2>
+<p>All routes are defined in <code>routes/web.php</code>. They are split into four groups:</p>
+
+<h3>Public routes (no login required)</h3>
+<table>
+  <tr><th>Method</th><th>URI</th><th>Controller</th><th>What it does</th></tr>
+  <tr><td>GET</td><td><code>/</code></td><td>HomeController@index</td><td>Home page</td></tr>
+  <tr><td>GET</td><td><code>/shop</code></td><td>ProductController@index</td><td>Shop listing with filters</td></tr>
+  <tr><td>GET</td><td><code>/search</code></td><td>ProductController@search</td><td>Live search (returns JSON)</td></tr>
+  <tr><td>GET</td><td><code>/shop/{product:slug}</code></td><td>ProductController@show</td><td>Product detail page</td></tr>
+  <tr><td>GET/POST</td><td><code>/contact</code></td><td>ContactController</td><td>Contact form</td></tr>
+  <tr><td>GET</td><td><code>/cart</code></td><td>CartController@index</td><td>Cart page</td></tr>
+  <tr><td>POST/PATCH/DELETE</td><td><code>/cart/{product}</code></td><td>CartController</td><td>Add / update / remove from cart</td></tr>
+  <tr><td>GET</td><td><code>/checkout</code></td><td>OrderController@create</td><td>Checkout form</td></tr>
+  <tr><td>POST</td><td><code>/orders</code></td><td>OrderController@store</td><td>Place an order</td></tr>
+</table>
+
+<h3>Auth-required routes (<code>middleware('auth')</code>)</h3>
+<table>
+  <tr><th>Method</th><th>URI</th><th>What it does</th></tr>
+  <tr><td>GET</td><td><code>/orders</code></td><td>User's order history</td></tr>
+  <tr><td>GET</td><td><code>/orders/{order}</code></td><td>Single order detail</td></tr>
+  <tr><td>POST</td><td><code>/shop/{product}/reviews</code></td><td>Submit a review</td></tr>
+  <tr><td>GET/PATCH/DELETE</td><td><code>/profile</code></td><td>View, update, delete account</td></tr>
+</table>
+
+<h3>Admin routes (<code>middleware(['auth', 'admin'])</code>)</h3>
+<p>All admin routes are grouped under the <code>/admin</code> prefix and the <code>admin.</code> name prefix. They require both authentication and the admin role (enforced by <strong>two middleware</strong> stacked together).</p>
+<table>
+  <tr><th>URI</th><th>What it does</th></tr>
+  <tr><td><code>/admin</code></td><td>Dashboard (stats, recent orders, activity)</td></tr>
+  <tr><td><code>/admin/products</code></td><td>Full CRUD via <code>Route::resource</code></td></tr>
+  <tr><td><code>/admin/categories</code></td><td>Full CRUD via <code>Route::resource</code></td></tr>
+  <tr><td><code>/admin/orders</code></td><td>Order list + detail + status change</td></tr>
+  <tr><td><code>/admin/users</code></td><td>List users, toggle admin role, delete</td></tr>
+  <tr><td><code>/admin/logs</code></td><td>View activity log</td></tr>
+  <tr><td><code>/admin/messages</code></td><td>View / delete contact messages</td></tr>
+</table>
+
+<h3>Route Model Binding</h3>
+<p>Laravel automatically looks up a model from the database based on the URL parameter. For example:</p>
+<pre><code>Route::get('/shop/{product:slug}', [ProductController::class, 'show']);</code></pre>
+<p>The <code>:slug</code> part tells Laravel to find the Product where <code>slug = [url segment]</code> instead of the default <code>id</code>. If nothing is found, Laravel returns a 404 automatically — no manual <code>findOrFail</code> needed.</p>
+
+<h3><code>Route::resource</code></h3>
+<p>Instead of registering 7 separate routes for CRUD, <code>Route::resource('products', ProductController::class)</code> automatically creates: index, create, store, show, edit, update, destroy — following REST conventions.</p>
+
+<!-- ===== 4. MIDDLEWARE ===== -->
+<h2>4. Middleware &amp; Access Control</h2>
+<p>Middleware is code that runs <em>before</em> a request reaches a controller. The project uses two middleware stacked together for admin routes:</p>
+<ul>
+  <li><code>auth</code> — built-in Laravel middleware, redirects unauthenticated users to the login page.</li>
+  <li><code>admin</code> — custom middleware in <code>app/Http/Middleware/AdminMiddleware.php</code>.</li>
+</ul>
+<pre><code>public function handle(Request $request, Closure $next): Response
+{
+    $user = Auth::user();
+    if (!Auth::check() || !$user->isAdmin()) {
+        abort(403, 'Access denied.');
+    }
+    return $next($request);
+}</code></pre>
+<p>If the user is not logged in or is not an admin, it immediately returns a 403 Forbidden response. Otherwise it calls <code>$next($request)</code> to pass the request further down to the controller.</p>
+
+<!-- ===== 5. APP SERVICE PROVIDER ===== -->
+<h2>5. AppServiceProvider — Bootstrap &amp; Shared Data</h2>
+<p><code>app/Providers/AppServiceProvider.php</code> is a special file that runs <strong>once on every request</strong> during Laravel's boot phase. We use it for three things:</p>
+
+<h3>Global pagination style</h3>
+<pre><code>Paginator::useBootstrapFive();</code></pre>
+<p>This makes all <code>->paginate()</code> calls render Bootstrap 5 pagination links by default, site-wide.</p>
+
+<h3>Sharing nav links with every view</h3>
+<pre><code>View::share('mainNavLinks', [
+    ['label' => 'Home',    'route' => 'home',       'icon' => 'fa-home',     'active' => ['home']],
+    ['label' => 'Shop',    'route' => 'shop.index',  'icon' => 'fa-store',    'active' => ['shop.index', 'shop.show']],
+    ['label' => 'Contact', 'route' => 'contact',     'icon' => 'fa-envelope', 'active' => ['contact']],
+]);</code></pre>
+<p><code>View::share()</code> injects a variable into <em>every</em> Blade template automatically. The navbar and footer both loop over <code>$mainNavLinks</code> — so adding or removing a nav item only requires editing this one place.</p>
+
+<h3>Listening to auth events</h3>
+<p>Laravel fires built-in events when users register, log in, and log out. We hook into those to automatically create activity log entries:</p>
+<pre><code>Event::listen(Login::class, function (Login $event) {
+    ActivityLog::log('user_login', "User '{$event->user->name}' logged in", $event->user->id);
+});</code></pre>
+<p>This means we never have to manually log these events inside controllers — it happens automatically.</p>
+
+<!-- ===== 6. CONTROLLERS ===== -->
+<h2>6. Controllers</h2>
+
+<h3>HomeController</h3>
+<p>Loads the home page with three pieces of data:</p>
+<ul>
+  <li><strong>Featured products</strong> — the 8 most recently added active products.</li>
+  <li><strong>Categories</strong> — only categories that have at least one active product (uses <code>withCount</code> + <code>having</code>).</li>
+  <li><strong>Total product count</strong> — displayed in the hero section.</li>
+</ul>
+<pre><code>$categories = Category::withCount(['products' => fn ($q) => $q->where('active', true)])
+    ->having('products_count', '>', 0)
+    ->get();</code></pre>
+<p><code>withCount</code> adds a virtual <code>products_count</code> column to each category result. <code>having</code> filters by that count — this is SQL's <code>HAVING</code> clause, used because you can't use <code>WHERE</code> on aggregate columns.</p>
+
+<h3>ProductController</h3>
+
+<h4>index() — Shop listing with filters</h4>
+<p>Builds a query dynamically based on what filters are present in the URL:</p>
+<pre><code>$query = Product::with('category')->where('active', true);
+
+if ($search = $request->get('search'))      { /* name/description LIKE search */ }
+if ($categories = $request->get('categories')) { $query->whereIn('category_id', ...); }
+if ($request->filled('price_min'))          { $query->where('price', '>=', ...); }
+if ($sort = $request->get('sort'))          { /* match expression for ordering */ }
+
+$products = $query->paginate(12)->withQueryString();</code></pre>
+<p><code>withQueryString()</code> preserves all current URL parameters (search, filters, sort) in the pagination links — so clicking "next page" doesn't lose your filters.</p>
+<p>When the request is AJAX (sent by JavaScript), it returns JSON with rendered HTML partials instead of a full page:</p>
+<pre><code>if ($request->ajax()) {
+    return response()->json([
+        'html'       => view('partials.product-grid', compact('products'))->render(),
+        'pagination' => view('partials.pagination', compact('products'))->render(),
+    ]);
+}</code></pre>
+
+<h4>search() — Live navbar search</h4>
+<p>Returns a JSON array of up to 6 matching products. Called by JavaScript as the user types (with debouncing to avoid too many requests). Requires at least 2 characters before querying.</p>
+
+<h4>show() — Product detail page</h4>
+<p>Uses eager loading to fetch related data in as few queries as possible:</p>
+<pre><code>$product->load(['category', 'reviews' => fn($q) => $q->with('user')->latest()]);</code></pre>
+<p><code>load()</code> is eager loading after the model is already fetched. The callback <code>fn($q) => $q->with('user')->latest()</code> constrains the reviews relationship — it loads reviews with their authors, sorted newest-first.</p>
+
+<h3>CartController</h3>
+<p>The cart is entirely <strong>session-based</strong> — no database table is involved. The cart is stored as an associative array in the PHP session:</p>
+<pre><code>// Structure: ['product_id' => quantity, ...]
+// e.g.: [3 => 2, 7 => 1]  means: product #3 qty 2, product #7 qty 1
+session()->get('cart', []);
+session()->put('cart', $cart);</code></pre>
+<p>This means the cart works for <strong>guests too</strong> (no login needed), and persists across pages as long as the session is alive.</p>
+<p>The <code>add()</code>, <code>update()</code>, and <code>remove()</code> methods all return <strong>JSON responses</strong> — they are called via AJAX. After each change, the response includes the new cart count, subtotals, and totals so the page can update without a reload.</p>
+<p>Shipping is calculated inline everywhere the cart is read:</p>
+<pre><code>$shipping = $subtotal >= 50 ? 0 : 5.99; // free shipping over $50</code></pre>
+
+<h3>OrderController (customer-side)</h3>
+
+<h4>create() — Checkout page</h4>
+<p>Reads the cart from session and passes the items + totals to the checkout view. If the cart is empty, redirects back to the cart page.</p>
+
+<h4>store() — Placing an order</h4>
+<p>This is the most important method for the order flow. Here's what happens step by step:</p>
+<ol>
+  <li>Validates shipping fields. If the user is a guest, also validates <code>guest_email</code>.</li>
+  <li>Fetches product models from the database to get current prices.</li>
+  <li>Calculates subtotal, shipping, and total.</li>
+  <li>Creates the <code>Order</code> record (with <code>user_id = null</code> for guests).</li>
+  <li>Loops through the cart and creates one <code>OrderItem</code> record per product.</li>
+  <li><strong>Decrements stock</strong> for each purchased product: <code>$products[$productId]->decrement('stock', $qty)</code></li>
+  <li>Clears the cart from session: <code>session()->forget('cart')</code></li>
+  <li>Redirects logged-in users to their order page; guests back to home with a flash message.</li>
+</ol>
+<p>Prices are <strong>snapshotted</strong> in <code>OrderItem.price</code> at the time of purchase. This means if the product price changes later, old orders still show the correct historical price.</p>
+
+<h3>Admin\OrderController — Order Status State Machine</h3>
+<p>Orders cannot jump to any status arbitrarily. The allowed transitions are enforced in code:</p>
+<pre><code>public static function allowedTransitions(): array
+{
+    return [
+        'pending'    => ['processing', 'cancelled'],
+        'processing' => ['shipped',    'cancelled'],
+        'shipped'    => ['delivered',  'cancelled'],
+        'delivered'  => [],   // locked — no further changes
+        'cancelled'  => [],   // locked — no further changes
+    ];
+}</code></pre>
+<p>When an admin submits a status change via AJAX, <code>updateStatus()</code> checks if the new status is in the allowed list for the current status. If not, it returns a 422 JSON error.</p>
+<p>Two important side effects happen on status change:</p>
+<ul>
+  <li><strong>Stock restore on cancel</strong> — if the new status is <code>cancelled</code>, the quantity of every order item is added back to the product's stock.</li>
+  <li><strong>Email notification</strong> — an email is sent to the customer (or guest email). This is wrapped in a try-catch so a mail failure doesn't break the response.</li>
+</ul>
+
+<h3>ReviewController</h3>
+<p>Reviews are submitted via AJAX (POST to <code>/shop/{product}/reviews</code>). The controller:</p>
+<ol>
+  <li>Validates: rating 1–5 (required), body 10–1000 chars (required).</li>
+  <li>Checks the database for an existing review by the same user for the same product — <strong>one review per user per product</strong> is enforced here.</li>
+  <li>If no duplicate, creates the review and returns JSON with the new review data and the updated average rating.</li>
+</ol>
+<p>The page doesn't reload — JavaScript receives the JSON and prepends the new review to the list and updates the star display.</p>
+
+<h3>ProfileController — Account Deletion</h3>
+<p>Before deleting an account, the controller checks for <strong>active orders</strong>:</p>
+<pre><code>$activeOrders = Order::where('user_id', $user->id)
+    ->whereIn('status', ['pending', 'processing', 'shipped'])
+    ->count();
+
+if ($activeOrders > 0) {
+    return Redirect::route('profile.edit')->withErrors(
+        ['active_orders' => "You have {$activeOrders} active order(s)..."],
+        'userDeletion'
+    );
+}</code></pre>
+<p>The error is sent in the <code>userDeletion</code> named error bag — this allows the profile page to re-open the delete modal automatically and show the warning without affecting any other form on the page.</p>
+
+<h3>ContactController</h3>
+<p>Validates and saves the contact message to the database first, <em>then</em> tries to send a notification email. The email is wrapped in try-catch — even if the mail service is down, the message is already safely stored in the DB.</p>
+
+<!-- ===== 7. AUTHENTICATION ===== -->
+<h2>7. Authentication — Laravel Breeze</h2>
+<p>Authentication (register, login, logout, password reset, email verification) is provided by <strong>Laravel Breeze</strong> — a minimal auth scaffolding package. It generates all the necessary controllers, views, and routes automatically. The generated routes live in <code>routes/auth.php</code> which is included at the bottom of <code>web.php</code>.</p>
+<p>Breeze uses <strong>session-based authentication</strong> — when a user logs in, their user ID is stored in the session and Laravel rehydrates the <code>Auth::user()</code> on every subsequent request.</p>
+<p>Key things Breeze provides:</p>
+<ul>
+  <li>Secure password hashing (bcrypt, automatic via the <code>'password' => 'hashed'</code> cast in the User model)</li>
+  <li>CSRF protection on all forms (the <code>@csrf</code> directive in Blade)</li>
+  <li>Remember me token support</li>
+  <li>Email verification flow</li>
+</ul>
+
+<!-- ===== 8. BLADE ===== -->
+<h2>8. Blade Templating</h2>
+<p>Blade is Laravel's templating engine. All view files live in <code>resources/views/</code> and use the <code>.blade.php</code> extension.</p>
+
+<h3>Layout inheritance</h3>
+<p>The shop and admin have separate master layouts. All shop pages extend a shared layout:</p>
+<pre><code>{{-- In any shop page --}}
+@extends('layouts.app')
+
+@section('title', 'Shop')
+
+@section('content')
+  &lt;!-- page content goes here --&gt;
+@endsection</code></pre>
+<p>The layout file (<code>layouts/app.blade.php</code>) has <code>@yield('content')</code> and <code>@yield('title')</code> placeholders which get filled in by each page. This avoids repeating the navbar/footer on every file.</p>
+
+<h3>Partials and includes</h3>
+<p>Reusable pieces of HTML are extracted into partials and included with <code>@include</code>:</p>
+<pre><code>@include('partials.navbar')
+@include('partials.footer')</code></pre>
+
+<h3>Directives used throughout the project</h3>
+<table>
+  <tr><th>Directive</th><th>What it does</th></tr>
+  <tr><td><code>@csrf</code></td><td>Inserts a hidden CSRF token field — required on all POST/PATCH/DELETE forms to protect against cross-site request forgery.</td></tr>
+  <tr><td><code>@method('PATCH')</code></td><td>HTML forms only support GET/POST. This inserts a hidden <code>_method</code> field that tells Laravel to treat the form as PATCH/DELETE.</td></tr>
+  <tr><td><code>@auth</code> / <code>@guest</code></td><td>Conditional blocks shown only to logged-in or guest users.</td></tr>
+  <tr><td><code>@foreach</code> / <code>@forelse</code></td><td><code>@forelse</code> is like <code>@foreach</code> but has an <code>@empty</code> fallback for when the collection is empty.</td></tr>
+  <tr><td><code>@if($errors->hasBag('userDeletion'))</code></td><td>Named error bags — check errors from a specific form when multiple forms are on the same page.</td></tr>
+  <tr><td><code>{{ }}</code> vs <code>{!! !!}</code></td><td><code>{{ }}</code> escapes HTML (safe, prevents XSS). <code>{!! !!}</code> outputs raw HTML — used only for trusted content.</td></tr>
+  <tr><td><code>route('shop.show', $product)</code></td><td>Generates a URL from a named route. Passing a model automatically uses the correct key (or slug with route model binding).</td></tr>
+  <tr><td><code>$loop->first</code>, <code>$loop->index</code></td><td>Inside <code>@foreach</code>, the <code>$loop</code> variable provides iteration info like index, whether it's the first/last item, etc.</td></tr>
+</table>
+
+<h3>Pagination in Blade</h3>
+<p>The admin panel uses Bootstrap 4 (AdminLTE), but the global default is Bootstrap 5. Admin views must explicitly request the Bootstrap 4 pagination view to avoid broken styles:</p>
+<pre><code>{{-- In admin views --}}
+{{ $orders->links('vendor.pagination.bootstrap-4') }}
+
+{{-- In shop views (uses global Bootstrap 5 default) --}}
+{{ $products->links() }}</code></pre>
+
+<!-- ===== 9. AJAX ===== -->
+<h2>9. AJAX Interactions</h2>
+<p>Several user-facing actions are handled via AJAX so the page doesn't reload. All AJAX calls use jQuery's <code>$.ajax()</code> and send the Laravel CSRF token in the header:</p>
+<pre><code>$.ajaxSetup({
+    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') }
+});</code></pre>
+
+<h3>Key AJAX flows:</h3>
+<table>
+  <tr><th>Action</th><th>HTTP call</th><th>What updates on success</th></tr>
+  <tr><td>Add to cart</td><td>POST <code>/cart/{product}</code></td><td>Navbar cart badge count</td></tr>
+  <tr><td>Update qty in cart</td><td>PATCH <code>/cart/{product}</code></td><td>Item total, subtotal, shipping, grand total</td></tr>
+  <tr><td>Remove from cart</td><td>DELETE <code>/cart/{product}</code></td><td>Removes row from DOM, updates totals</td></tr>
+  <tr><td>Live navbar search</td><td>GET <code>/search?q=...</code></td><td>Dropdown with results (debounced)</td></tr>
+  <tr><td>Shop filter/sort</td><td>GET <code>/shop?...</code> (ajax)</td><td>Product grid + pagination HTML replaced</td></tr>
+  <tr><td>Submit review</td><td>POST <code>/shop/{product}/reviews</code></td><td>New review prepended, star average updated</td></tr>
+  <tr><td>Admin: change order status</td><td>PATCH <code>/admin/orders/{id}/status</code></td><td>Page reloaded via <code>location.reload()</code></td></tr>
+  <tr><td>Admin: delete item</td><td>DELETE <code>/admin/...</code></td><td>Table row removed with fade animation</td></tr>
+  <tr><td>Admin: toggle user role</td><td>PATCH <code>/admin/users/{id}/toggle-role</code></td><td>Badge text updated in-place</td></tr>
+</table>
+
+<h3>Debouncing (live search)</h3>
+<p>When the user types in the search box, we don't want to fire a request on every single keystroke. Debouncing delays the request until the user has stopped typing for a set time (300ms):</p>
+<pre><code>let searchTimeout;
+$('#navSearchInput').on('input', function () {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        // fire AJAX search
+    }, 300);
+});</code></pre>
+
+<!-- ===== 10. ACTIVITY LOGGING ===== -->
+<h2>10. Activity Logging</h2>
+<p>The <code>ActivityLog</code> model has a static <code>log()</code> helper method that makes logging a one-liner anywhere in the codebase:</p>
+<pre><code>ActivityLog::log('cart_add', "Added '{$product->name}' (qty: {$quantity}) to cart");
+ActivityLog::log('order_created', "Order #{$order->id} created, total: {$total}");
+ActivityLog::log('review_posted', "Posted review for product '{$product->name}'");</code></pre>
+<p>The method automatically reads the current logged-in user and the client's IP address:</p>
+<pre><code>public static function log(string $action, string $description, ?int $userId = null): self
+{
+    return self::create([
+        'user_id'     => $userId ?? Auth::id(),
+        'action'      => $action,
+        'description' => $description,
+        'ip_address'  => request()->ip(),
+    ]);
+}</code></pre>
+<p>Three events (register, login, logout) are logged automatically via Laravel event listeners in <code>AppServiceProvider</code>, so no controller code is needed for those.</p>
+
+<!-- ===== 11. EMAIL ===== -->
+<h2>11. Email Notifications</h2>
+<p>Emails are sent using Laravel's <strong>Mailable</strong> class system. The project has two mailables:</p>
+<ul>
+  <li><code>App\Mail\OrderStatusMail</code> — sent on every order status change</li>
+  <li><code>App\Mail\ContactMail</code> — sent to the admin when someone submits the contact form</li>
+</ul>
+
+<h3>How a Mailable works</h3>
+<pre><code>class OrderStatusMail extends Mailable
+{
+    public function __construct(public Order $order, public ?string $cancelReason = null) {}
+
+    public function envelope(): Envelope
+    {
+        return new Envelope(subject: 'Your WildCart Order #' . $this->order->id . ' — Status Update');
+    }
+
+    public function content(): Content
+    {
+        return new Content(view: 'emails.order-status');
+    }
+}</code></pre>
+<p>The constructor uses PHP 8 <strong>constructor property promotion</strong> (<code>public Order $order</code>) — this declares the property and assigns it in one line. The <code>$order</code> and <code>$cancelReason</code> are automatically available inside the <code>emails/order-status.blade.php</code> view.</p>
+<p>Sending the email:</p>
+<pre><code>$email = $order->user?->email ?? $order->guest_email; // null-safe operator
+Mail::to($email)->send(new OrderStatusMail($order, $cancelReason));</code></pre>
+<p><code>$order->user?->email</code> uses the <strong>null-safe operator (<code>?-></code>)</strong> — if <code>$order->user</code> is null (guest order), it returns null instead of crashing. Then <code>??</code> falls back to <code>guest_email</code>.</p>
+<p>The entire send is wrapped in try-catch so a mail service failure logs an error but doesn't break the order status update response.</p>
+<p>During development, mail is tested with <strong>Mailtrap</strong> — a fake SMTP inbox that captures emails without actually sending them.</p>
+
+<!-- ===== 12. ADMIN PANEL ===== -->
+<h2>12. Admin Panel</h2>
+<p>The admin panel lives under <code>/admin</code> and is built with <strong>AdminLTE 3</strong> (a Bootstrap 4 admin template). Its controllers are in a separate namespace: <code>App\Http\Controllers\Admin\</code>.</p>
+
+<h3>Dashboard</h3>
+<p>Displays four summary stats, recent orders, and recent activity:</p>
+<pre><code>$stats = [
+    'users'    => User::count(),
+    'products' => Product::count(),
+    'orders'   => Order::count(),
+    'revenue'  => Order::where('status', '!=', 'cancelled')->sum('total'),
+];</code></pre>
+<p>Revenue excludes cancelled orders using a simple <code>where</code> filter before <code>sum()</code>.</p>
+
+<h3>Product management</h3>
+<p>Uses <code>Route::resource</code> which maps to a standard set of controller methods: <code>index</code>, <code>create</code>, <code>store</code>, <code>edit</code>, <code>update</code>, <code>destroy</code>. Product images are uploaded to <code>storage/app/public/</code> and served via a symlink that <code>php artisan storage:link</code> creates.</p>
+
+<h3>User management</h3>
+<p>Admins can toggle another user's role between <code>user</code> and <code>admin</code> via AJAX. A safeguard prevents an admin from deleting or demoting their own account.</p>
+
+<h3>Order management filters</h3>
+<p>The admin orders list supports filtering by status and searching by customer name/email. The search uses a <code>whereHas</code> query — it queries through the relationship:</p>
+<pre><code>$query->whereHas('user', fn($q) =>
+    $q->where('name', 'like', "%{$search}%")
+      ->orWhere('email', 'like', "%{$search}%")
+);</code></pre>
+<p><code>whereHas</code> translates to a SQL <code>EXISTS</code> subquery — it only returns orders where the related user matches the search term.</p>
+
+<!-- ===== 13. GUEST CHECKOUT ===== -->
+<h2>13. Guest Checkout Flow</h2>
+<p>One of the more interesting design decisions is that <strong>checkout does not require an account</strong>. Here is how this is handled:</p>
+<div class="diagram">
+Guest visits site
+  → adds products to cart (session storage, works without login)
+  → goes to /checkout
+  → fills in shipping info + provides email address
+  → POST /orders
+    → user_id = NULL
+    → guest_email = submitted email
+    → order created, stock decremented
+    → redirected to home with flash message
+  → receives email notification on status changes
+</div>
+<p>When the admin views a guest order, the code safely handles the missing user with the null-safe operator:</p>
+<pre><code>$email = $order->user?->email ?? $order->guest_email;</code></pre>
+<p>In Blade, null-safe access is done with <code>optional()</code> or direct null checks before accessing user properties.</p>
+
+<!-- ===== 14. EAGER LOADING ===== -->
+<h2>14. Eager Loading — Preventing N+1 Queries</h2>
+<p>This is an important performance concept in Laravel. Consider loading 10 orders and then showing each order's user name. Without eager loading:</p>
+<pre><code>// BAD — N+1 problem: 1 query for orders + 1 query per order for its user = 11 queries
+$orders = Order::all();
+foreach ($orders as $order) {
+    echo $order->user->name; // each access fires a new SQL query
+}</code></pre>
+<pre><code>// GOOD — eager loading: 2 queries total (one for orders, one for all users)
+$orders = Order::with('user')->get();</code></pre>
+<p>Throughout the project, <code>->with()</code> is used whenever related data is needed in a view. For example:</p>
+<pre><code>Order::with('user')->orderByDesc('created_at')->paginate(15);
+$order->load('user', 'items.product'); // dot notation loads nested: items AND each item's product</code></pre>
+
+<!-- ===== 15. VALIDATION ===== -->
+<h2>15. Form Validation</h2>
+<p>Laravel validates request data with <code>$request->validate([])</code>. If validation fails, Laravel automatically redirects back with the errors in the session — no manual error handling needed.</p>
+<pre><code>$request->validate([
+    'shipping_name'    => 'required|string|max:255',
+    'shipping_address' => 'required|string|max:255',
+    'guest_email'      => 'required|email|max:100', // only added for guests
+]);</code></pre>
+<p>In Blade, errors are displayed using <code>$errors</code>:</p>
+<pre><code>@error('shipping_name')
+    &lt;div class="text-danger"&gt;{{ $message }}&lt;/div&gt;
+@enderror</code></pre>
+<p>For AJAX endpoints (like reviews and cart), the controller returns a JSON response with status 422, and JavaScript handles displaying the error message.</p>
+
+<!-- ===== 16. STRUCTURE ===== -->
+<h2>16. Project File Structure (Key Files)</h2>
+<div class="diagram">
+app/
+  Http/
+    Controllers/
+      CartController.php        ← session-based cart logic
+      OrderController.php       ← customer checkout + order view
+      ProductController.php     ← shop listing, live search, product detail
+      ReviewController.php      ← AJAX review submission
+      ProfileController.php     ← account management + delete guard
+      ContactController.php     ← contact form
+      HomeController.php        ← home page
+      Admin/
+        DashboardController.php ← stats dashboard
+        OrderController.php     ← status machine + email + stock restore
+        ProductController.php   ← product CRUD
+        CategoryController.php  ← category CRUD
+        UserController.php      ← user management
+        ActivityLogController.php
+        ContactMessageController.php
+    Middleware/
+      AdminMiddleware.php       ← admin role gate
+  Mail/
+    OrderStatusMail.php         ← order status email
+    ContactMail.php             ← contact form notification
+  Models/
+    User.php, Product.php, Category.php, Order.php,
+    OrderItem.php, Review.php, ActivityLog.php, ContactMessage.php
+  Providers/
+    AppServiceProvider.php      ← boot logic, shared nav, event listeners
+
+routes/
+  web.php                       ← all application routes
+  auth.php                      ← Breeze auth routes (auto-generated)
+
+resources/views/
+  layouts/
+    app.blade.php               ← shop master layout
+    admin.blade.php             ← admin master layout
+  partials/
+    navbar.blade.php, footer.blade.php, product-grid.blade.php
+  shop/
+    index.blade.php, show.blade.php, cart.blade.php,
+    checkout.blade.php, orders.blade.php, order-detail.blade.php, contact.blade.php
+  home.blade.php
+  profile/
+    edit.blade.php
+  admin/
+    dashboard.blade.php
+    orders/, products/, categories/, users/, messages/, logs/
+  emails/
+    order-status.blade.php      ← email template
+
+database/migrations/            ← one file per table, run with artisan migrate
+</div>
+
+<!-- ===== SUMMARY ===== -->
+<h2>Summary — Key Concepts to Know</h2>
+<table>
+  <tr><th>Concept</th><th>Where used</th><th>One-line explanation</th></tr>
+  <tr><td>Route Model Binding</td><td><code>/shop/{product:slug}</code></td><td>Laravel auto-fetches the model from the DB using the URL segment</td></tr>
+  <tr><td>Route::resource</td><td>Admin products/categories</td><td>One line generates 7 RESTful routes</td></tr>
+  <tr><td>Middleware stacking</td><td>Admin routes</td><td>Multiple middleware run in sequence before the controller</td></tr>
+  <tr><td>Session-based cart</td><td>CartController</td><td>Cart stored in server-side session, works without a DB or login</td></tr>
+  <tr><td>Eager loading (with/load)</td><td>Everywhere</td><td>Prevents N+1 queries by fetching relationships upfront</td></tr>
+  <tr><td>withQueryString()</td><td>Shop pagination</td><td>Keeps filter params in paginator links</td></tr>
+  <tr><td>withCount + having</td><td>HomeController categories</td><td>SQL aggregate filter — only show categories with products</td></tr>
+  <tr><td>whereHas</td><td>Admin order search</td><td>Filter by a related model's columns</td></tr>
+  <tr><td>Named error bags</td><td>Profile delete modal</td><td>Multiple forms on one page, errors separated by name</td></tr>
+  <tr><td>View::share</td><td>AppServiceProvider</td><td>Injects a variable into every view globally</td></tr>
+  <tr><td>Event listeners</td><td>AppServiceProvider</td><td>Hook into auth events to auto-log login/logout/register</td></tr>
+  <tr><td>Mailable class</td><td>OrderStatusMail</td><td>Encapsulates an email — data + template in one class</td></tr>
+  <tr><td>Null-safe operator (?->)</td><td>Guest orders</td><td>PHP 8 — returns null instead of crashing if left side is null</td></tr>
+  <tr><td>Price snapshotting</td><td>OrderItem.price</td><td>Store price at purchase time so historical orders stay accurate</td></tr>
+  <tr><td>Status state machine</td><td>Admin order status</td><td>Enforce valid transitions in code, not just in the UI</td></tr>
+  <tr><td>Stock decrement/restore</td><td>Order store / cancel</td><td>Stock adjusted at purchase and restored on cancellation</td></tr>
+  <tr><td>AJAX JSON responses</td><td>Cart, reviews, admin</td><td>Controllers return JSON; JS updates the DOM without page reload</td></tr>
+  <tr><td>Debouncing</td><td>Live search</td><td>Delay AJAX call until typing stops to reduce server requests</td></tr>
+  <tr><td>Guest checkout</td><td>OrderController</td><td>user_id nullable, guest_email stored — no account required</td></tr>
+  <tr><td>Accessor method</td><td>Product::average_rating</td><td>Computed property — calculated on access, not stored in DB</td></tr>
+  <tr><td>ActivityLog::log()</td><td>All controllers</td><td>Static helper method — one-line logging anywhere in the app</td></tr>
+</table>
+
+<p style="margin-top:30px; color:#64748b; font-size:.82rem; text-align:center;">
+  WildCart &mdash; Laravel E-commerce Project &mdash; Generated 2026-03-23
+</p>
+
+</body>
+</html>
