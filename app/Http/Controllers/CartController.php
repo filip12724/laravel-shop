@@ -44,7 +44,12 @@ class CartController extends Controller
         $quantity = (int) $request->get('quantity', 1);
         $cart     = self::getCart();
 
-        $cart[$product->id] = ($cart[$product->id] ?? 0) + $quantity;
+        $newQty = ($cart[$product->id] ?? 0) + $quantity;
+        if ($newQty > $product->stock) {
+            return response()->json(['success' => false, 'message' => 'Not enough stock available.'], 422);
+        }
+
+        $cart[$product->id] = $newQty;
         session()->put('cart', $cart);
 
         if (Auth::check()) {

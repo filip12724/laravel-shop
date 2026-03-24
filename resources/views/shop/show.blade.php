@@ -243,7 +243,7 @@
 
     <div class="col-md-7 product-info">
         <span class="product-category-tag">
-            <i class="fas fa-tag me-1"></i>{{ $product->category->name }}
+            <i class="fas fa-tag me-1"></i>{{ $product->category?->name ?? 'Uncategorized' }}
         </span>
 
         <h1 class="product-title">{{ $product->name }}</h1>
@@ -520,15 +520,19 @@ $('#reviewForm').on('submit', function (e) {
             $('#noReviewsMsg').remove();
             const stars = Array.from({length: 5}, (_, i) =>
                 `<i class="fas fa-star${i >= res.review.rating ? ' empty' : ''}"></i>`).join('');
-            $('#reviewsList').prepend(`
+            const $review = $(`
                 <div class="review-item">
                     <div class="d-flex justify-content-between align-items-center mb-1">
-                        <span class="review-author">${res.review.user}</span>
-                        <span class="review-date">${res.review.created_at}</span>
+                        <span class="review-author"></span>
+                        <span class="review-date"></span>
                     </div>
                     <div class="review-stars">${stars}</div>
-                    <div class="review-body">${res.review.body}</div>
+                    <div class="review-body"></div>
                 </div>`);
+            $review.find('.review-author').text(res.review.user);
+            $review.find('.review-date').text(res.review.created_at);
+            $review.find('.review-body').text(res.review.body);
+            $('#reviewsList').prepend($review);
             $('#reviewCount').text(res.total);
             $('#reviewForm')[0].reset();
             selectedRating = 0;

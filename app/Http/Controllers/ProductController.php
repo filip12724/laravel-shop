@@ -12,14 +12,14 @@ class ProductController extends Controller
     {
         $query = Product::with('category')->where('active', true);
 
-        if ($search = $request->get('search')) {
+        if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('description', 'like', "%{$search}%");
             });
         }
 
-        if ($categories = $request->get('categories')) {
+        if ($categories = $request->input('categories')) {
             $query->whereIn('category_id', (array) $categories);
         }
 
@@ -31,7 +31,7 @@ class ProductController extends Controller
             $query->where('price', '<=', (float) $request->price_max);
         }
 
-        if ($sort = $request->get('sort')) {
+        if ($sort = $request->input('sort')) {
             match ($sort) {
                 'price_asc'  => $query->orderBy('price'),
                 'price_desc' => $query->orderByDesc('price'),
@@ -58,7 +58,7 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-        $q = trim($request->get('q', ''));
+        $q = trim($request->input('q', ''));
 
         if (strlen($q) < 2) {
             return response()->json([]);

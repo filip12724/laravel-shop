@@ -167,27 +167,37 @@
                     </div>
                     @endguest
 
+                    @error('cart')<div class="alert alert-danger py-2 mb-3">{{ $message }}</div>@enderror
+
                     <div class="mb-3">
                         <label class="form-label">Full Name <span class="required-star">*</span></label>
-                        <input type="text" name="shipping_name" class="form-control"
+                        <input type="text" name="shipping_name"
+                               class="form-control @error('shipping_name') is-invalid @enderror"
                                value="{{ old('shipping_name', auth()->user()?->name) }}" required>
+                        @error('shipping_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Address <span class="required-star">*</span></label>
-                        <input type="text" name="shipping_address" class="form-control"
+                        <input type="text" name="shipping_address"
+                               class="form-control @error('shipping_address') is-invalid @enderror"
                                value="{{ old('shipping_address') }}" required
                                placeholder="Street address">
+                        @error('shipping_address')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="row mb-3">
                         <div class="col-8">
                             <label class="form-label">City <span class="required-star">*</span></label>
-                            <input type="text" name="shipping_city" class="form-control"
+                            <input type="text" name="shipping_city"
+                                   class="form-control @error('shipping_city') is-invalid @enderror"
                                    value="{{ old('shipping_city') }}" required>
+                            @error('shipping_city')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="col-4">
                             <label class="form-label">ZIP <span class="required-star">*</span></label>
-                            <input type="text" name="shipping_zip" class="form-control"
+                            <input type="text" name="shipping_zip"
+                                   class="form-control @error('shipping_zip') is-invalid @enderror"
                                    value="{{ old('shipping_zip') }}" required>
+                            @error('shipping_zip')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
                     <div class="mb-4">

@@ -76,7 +76,7 @@
             </div>
             <div style="font-size:1rem;font-weight:700;color:#1a202c;margin-bottom:6px;">Delete category?</div>
             <div id="deleteCatDesc" style="font-size:.875rem;color:#64748b;line-height:1.55;">
-                All products in this category will also be deleted. This cannot be undone.
+                This cannot be undone.
             </div>
         </div>
         <div style="padding:20px 24px 24px;display:flex;gap:10px;justify-content:flex-end;">
@@ -112,7 +112,7 @@ $(document).on('click', '.btn-delete', function () {
     _deleteUrl = $(this).data('url');
     _deleteRow = $(this).closest('tr');
     const name = $(this).data('name');
-    $('#deleteCatDesc').text(`"${name}" and all its products will be permanently deleted and cannot be recovered.`);
+    $('#deleteCatDesc').text(`"${name}" will be permanently deleted and cannot be recovered.`).css('color', '#64748b');
     $('#deleteCatModal').css('display', 'flex');
 });
 
@@ -135,6 +135,10 @@ $('#deleteCatConfirm').on('click', function () {
                 _deleteRow.fadeOut(300, () => _deleteRow.remove());
                 $('#deleteCatModal').hide();
             }
+        },
+        error: xhr => {
+            const msg = xhr.responseJSON?.message ?? 'Could not delete category.';
+            $('#deleteCatDesc').text(msg).css('color', '#ef4444');
         },
         complete: () => btn.html('<i class="fas fa-trash mr-1"></i> Delete').prop('disabled', false)
     });

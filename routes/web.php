@@ -8,29 +8,31 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
+
 use Illuminate\Support\Facades\Route;
 
 // Public shop routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [ProductController::class, 'index'])->name('shop.index');
-Route::get('/search', [ProductController::class, 'search'])->name('search');
 Route::get('/shop/{product:slug}', [ProductController::class, 'show'])->name('shop.show');
+
+Route::get('/search', [ProductController::class, 'search'])->name('search');
 
 Route::get('/contact', [ContactController::class, 'create'])->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
-// Cart — no login required
+// Cart & checkout — available to guests and logged-in users
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/{product}', [CartController::class, 'add'])->name('cart.add');
 Route::patch('/cart/{product}', [CartController::class, 'update'])->name('cart.update');
 Route::delete('/cart/{product}', [CartController::class, 'remove'])->name('cart.remove');
 
-// Checkout — no login required (guests can checkout)
 Route::get('/checkout', [OrderController::class, 'create'])->name('checkout');
 Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
 
 // Auth-required shop routes
 Route::middleware(['auth'])->group(function () {
+    // Orders
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
 

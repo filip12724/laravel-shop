@@ -12,7 +12,9 @@ class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Auth::user()->orders()->with('items.product')->orderByDesc('created_at')->paginate(10);
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $orders = $user->orders()->with('items.product')->orderByDesc('created_at')->paginate(10);
         return view('shop.orders', compact('orders'));
     }
 
@@ -60,6 +62,14 @@ class OrderController extends Controller
         }
 
         $products  = Product::whereIn('id', array_keys($cart))->get()->keyBy('id');
+
+        foreach ($cart as $productId => $qty) {
+            if (!isset($products[$productId])) continue;
+            if ($products[$productId]->stock < $qty) {
+                return back()->withErrors(['cart' => "'{$products[$productId]->name}' only has {$products[$productId]->stock} item(s) left in stock. Please update your cart."]);
+            }
+        }
+
         $subtotal  = array_reduce(array_keys($cart), fn($carry, $id) => $carry + ($products[$id]->price ?? 0) * $cart[$id], 0);
         $shipping  = $subtotal >= 50 ? 0 : 5.99;
         $total     = $subtotal + $shipping;
